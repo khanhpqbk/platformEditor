@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" id="vbox" onKeyPressed="#handleKeyInput" prefHeight="400.0" prefWidth="800.0"  fx:controller="graphicaleditor.controller.FXMLDocumentController">
+  <center>
+    <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab text="Graphical Mode">
+          <content>
+            <fx:include fx:id="graphicalMode" source="graphicalmode.fxml"/>
+          </content>
+        </Tab>
+        <Tab text="Text Mode">
+          <content>
+            <fx:include fx:id="textMode" source="textmode.fxml" />
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </center>
+  <top>
+    <MenuBar fx:id="menuBar">
+      <menus>
+        <Menu text="File">
+          <items>
+            <MenuItem text="New     " onAction="#newFile" />
+            <MenuItem text="Open" onAction="#open" />
+            <MenuItem text="Save" />
+            <MenuItem text="Save As" />
+            <SeparatorMenuItem />
+            <MenuItem onAction="#handleExitAction" text="Exit" />
+          </items>
+        </Menu>
+        <Menu text="Generate">
+          <items>
+            <MenuItem text="Ring    " onAction="#genRing"  />
+            <MenuItem text="Star" onAction="#genStar" />
+            <MenuItem text="Mesh" onAction="#genMesh"  />
+            <MenuItem text="Torus" onAction="#genTorus" />
+          </items>
+        </Menu>
+        <Menu text="Room mode">
+          <items>
+            <MenuItem text="Turn on" fx:id="turnOnOff" onAction="#turnOnOffRoomMode"  />
+            <MenuItem text="Add restricted area" onAction="#addRestrictedArea" />
+          </items>
+        </Menu>
+        <Menu text="Help">
+          <items>
+            <MenuItem disable="true" text="Search" />
+            <MenuItem text="Online Manual" visible="false" />
+            <SeparatorMenuItem />
+            <MenuItem onAction="#handleAboutAction" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+  </top>
+</BorderPane>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane  id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.HostDetailController">
+  <children>
+    <GridPane layoutX="19.0" layoutY="18.0" prefHeight="372.00010681152344" prefWidth="562.0">
+      <children>
+        <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="1">
+          <children>
+            <Label prefHeight="29.0" prefWidth="125.0" text="Id" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="2">
+          <children>
+            <Label text="Power" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="3">
+          <children>
+            <Label prefHeight="29.0" prefWidth="125.0" text="Pstate" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="4">
+          <children>
+            <Label prefHeight="29.0" prefWidth="133.0" text="Availability" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="5">
+          <children>
+            <Label prefHeight="34.0" prefWidth="110.0" text="Core" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="6">
+          <children>
+            <GridPane id="GridPane" GridPane.columnIndex="0" GridPane.rowIndex="0">
+              <children>
+                <Label prefHeight="20.0" prefWidth="110.0" text="State" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+              </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+        </GridPane>
+        <Group id="Group" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <children>
+            <TextField fx:id="id" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="id" />
+          </children>
+        </Group>
+        <Group id="Group" scaleX="1.0" scaleY="1.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+          <children>
+            <TextField fx:id="power" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="power" />
+          </children>
+        </Group>
+        <Group id="Group" GridPane.columnIndex="1" GridPane.rowIndex="3">
+          <children>
+            <TextField fx:id="pstate" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="pstate" />
+          </children>
+        </Group>
+        <Group id="Group" scaleX="1.0" scaleY="1.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+          <children>
+            <TextField fx:id="state" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="state" />
+          </children>
+        </Group>
+        <Group id="Group" scaleX="1.0" scaleY="1.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+          <children>
+            <TextField fx:id="availability" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="ava" />
+          </children>
+        </Group>
+        <Group id="Group" scaleX="1.0" scaleY="1.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+          <children>
+            <Group id="Group" layoutX="0.0" layoutY="0.0" scaleX="1.0" scaleY="1.0">
+              <children>
+                <Group id="Group" layoutX="0.0" layoutY="-11.0" scaleX="1.0" scaleY="1.0" />
+              </children>
+            </Group>
+          </children>
+        </Group>
+        <Group id="Group" GridPane.columnIndex="1" GridPane.rowIndex="5">
+          <children>
+            <TextField fx:id="core" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="core" />
+          </children>
+        </Group>
+        <Button fx:id="btnOk" mnemonicParsing="false" prefWidth="56.0" text="Ok" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Button fx:id="btnCancel" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+        <Group id="Group" GridPane.columnIndex="1" GridPane.rowIndex="7">
+          <children>
+            <Label fx:id="warningLbl"  layoutX="-141.0" layoutY="-8.0" prefWidth="415.0" text="" />
+          </children>
+        </Group>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+  </children>
+</AnchorPane>

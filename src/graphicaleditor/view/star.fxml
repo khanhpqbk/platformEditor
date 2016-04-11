@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" minHeight="182.0" prefHeight="182.0" prefWidth="275.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"  fx:controller="graphicaleditor.controller.StarController">
+  <children>
+    <GridPane layoutX="14.0" layoutY="14.0" prefHeight="154.0" prefWidth="247.0">
+      <children>
+        <Group id="Group" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          <children>
+            <HBox id="HBox" alignment="CENTER" layoutX="0.0" layoutY="-26.0" spacing="5.0">
+              <children>
+                <Label prefWidth="233.0" text="      Enter parameters for star topology" textAlignment="CENTER" underline="false" />
+              </children>
+            </HBox>
+          </children>
+        </Group>
+        <Label prefWidth="87.0" text="AS id" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="asId" prefHeight="31.0" prefWidth="137.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label text="Number of hosts" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <TextField fx:id="numOfHost" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Button mnemonicParsing="false" prefWidth="80.0" fx:id="okBtn"  text="Ok" textAlignment="LEFT" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <Button mnemonicParsing="false" text="Cancel" fx:id="cancelBtn"  GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="110.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="137.0" minWidth="10.0" prefWidth="137.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+  </children>
+</AnchorPane>
+
