@@ -5,7 +5,8 @@
  */
 package graphicaleditor.controller;
 
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.model.HostView;
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +28,7 @@ import org.xml.sax.SAXException;
  *
  * @author KHANH
  */
-public class HostDetailController extends DialogController {
+public class HostDetailController extends AbstractDialogController {
 
     @FXML
     private TextField id;
@@ -46,7 +47,7 @@ public class HostDetailController extends DialogController {
 
     @FXML
     private TextField availability;
-    
+
     @FXML
     private Label warningLbl;
 
@@ -57,6 +58,7 @@ public class HostDetailController extends DialogController {
     public void setParentController(GraphicalModeController g) {
         this.parentController = g;
     }
+
     public void setHostView(HostView h) {
         this.hostView = h;
     }
@@ -71,26 +73,18 @@ public class HostDetailController extends DialogController {
         core.setText(String.valueOf(hostView.getCore()));
 
         id.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                //            System.out.println("textfield changed from " + oldValue + " to " + newValue);
-                XMLProcessor p = new XMLProcessor(parentController.getParentController().getSelectedFile().getAbsolutePath());
-                p.parse();
-                if (p.getHostRouterIdList().contains(newValue)) {
-                    warningLbl.setText("Duplicate host id!");
-                    warningLbl.setTextFill(Color.RED);
-                    okBtn.setDisable(true);
-                } else {
-                    warningLbl.setText("");
-                    okBtn.setDisable(false);
-                }
-            } catch (SAXException ex) {
-                Logger.getLogger(HostDetailController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(HostDetailController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParserConfigurationException ex) {
-                Logger.getLogger(HostDetailController.class.getName()).log(Level.SEVERE, null, ex);
+            //            System.out.println("textfield changed from " + oldValue + " to " + newValue);
+            XMLProcessor p = new XMLProcessor(parentController.getParentController().getSelectedFile().getAbsolutePath());
+            p.parse();
+            if (p.getHostRouterIdList().contains(newValue)) {
+                warningLbl.setText("Duplicate host id!");
+                warningLbl.setTextFill(Color.RED);
+                okBtn.setDisable(true);
+            } else {
+                warningLbl.setText("");
+                okBtn.setDisable(false);
             }
-           
+
         });
     }
 

@@ -5,6 +5,8 @@
  */
 package graphicaleditor.controller;
 
+import graphicaleditor.controller.xml.TextFileReader;
+import graphicaleditor.controller.xml.XMLProcessor;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.HostView;
 import graphicaleditor.model.RouteView;
@@ -45,179 +47,82 @@ public class TextModeController implements Initializable {
     private TextArea textAreaTextMode;
 
     private FXMLDocumentController parentController;
-    
+
     public void setParentController(FXMLDocumentController c) {
         this.parentController = c;
     }
-    
+
     public void clearText() {
         textAreaTextMode.clear();
     }
+
     public void addASXml(ASView as) {
         System.out.println("add AS xml");
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.addASXml(as);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.addASXml(as);
+
     }
-    
+
     public void addHostXml(ASView as, HostView host) {
-        try {
-            System.out.println("add host xml");
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.addHostXml(as, host);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.out.println("add host xml");
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.addHostXml(as, host);
     }
-    
+
     public void removeASXml(ASView as) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.removeASXml(as);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.removeASXml(as);
+
     }
-    
+
     public void removeHostXml(ASView as, HostView host) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.removeHostXml(as, host);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.removeHostXml(as, host);
+
     }
-    
+
     public void modifyHostXml(HostView newHost, String oldId) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.modifyHostXml(newHost, oldId);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.modifyHostXml(newHost, oldId);
+
     }
-    
+
     public void addRouteXml(ASView as, RouteView rv) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.addRouteXml(as, rv);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.addRouteXml(as, rv);
     }
-    
+
     public void removeRouteXml(RouteView rv) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.removeRouteXml(rv);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.removeRouteXml(rv);
     }
-    
+
     public void addRouteRoomXml(ASView as, RouteViewRoom rv) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.addRouteRoomXml(as, rv);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.addRouteRoomXml(as, rv);
     }
-    
+
     public void removeRouteRoomXml(RouteViewRoom rv) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.removeRouteRoomXml(rv);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.removeRouteRoomXml(rv);
     }
-    
+
     public void addRouterXml(ASView as, RouterView rv) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.addRouterXml(as, rv);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.addRouterXml(as, rv);
     }
-    
+
     public void removeRouterXml(RouterView rv) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.removeRouterXml(rv);
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.removeRouterXml(rv);
     }
-    
+
     public void modifyRouterXml(RouterView oldR, RouterView newR) {
-        try {
-            XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
-            parser.modifyRouterXml(newR, oldR.getmId());
-        } catch (SAXException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        XMLProcessor parser = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+        parser.modifyRouterXml(newR, oldR.getmId());
     }
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -245,7 +150,7 @@ public class TextModeController implements Initializable {
         } catch (ExecutionException ex) {
             Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         executorService.shutdownNow();
         textAreaTextMode.clear();
         for (String line : lines) {
@@ -268,7 +173,7 @@ public class TextModeController implements Initializable {
         try {
             fw = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(fw);
-            for(String line: lines) {
+            for (String line : lines) {
                 bw.write(line);
                 bw.newLine();
 //                System.out.println(line);

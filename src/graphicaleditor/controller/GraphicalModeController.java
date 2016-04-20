@@ -1,6 +1,7 @@
 package graphicaleditor.controller;
 
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.controller.interfaces.IHandler;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.Host;
@@ -930,7 +931,7 @@ public class GraphicalModeController implements Initializable {
         IHandler handler = new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 HostDetailController c = (HostDetailController) controller;
                 
                 HostView newHost = c.createHostFromFields();

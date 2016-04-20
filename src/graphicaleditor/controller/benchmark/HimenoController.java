@@ -7,7 +7,7 @@
 package graphicaleditor.controller.benchmark;
 
 import graphicaleditor.controller.FXMLDocumentController;
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -19,7 +19,7 @@ import javafx.scene.control.TextField;
  *
  * @author KHANH
  */
-public class HimenoController extends DialogController {
+public class HimenoController extends AbstractDialogController {
 
     @FXML
     private TextField numOfProcs;

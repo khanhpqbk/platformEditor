@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package graphicaleditor.controller;
+package graphicaleditor.controller.gentopo;
 
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -18,21 +18,35 @@ import javafx.scene.control.TextField;
  *
  * @author KHANH
  */
-public class RingController extends DialogController {
-    
+public class TorusController extends AbstractDialogController {
+
     @FXML
     private TextField asId;
     
     @FXML
-    private TextField numOfHost;
+    private TextField x;
+    
+    @FXML
+    private TextField y;
+    
+    @FXML
+    private TextField z;
 
 
     public TextField getAsId() {
         return asId;
     }
 
-    public TextField getNumOfHost() {
-        return numOfHost;
+    public TextField getX() {
+        return x;
+    }
+
+    public TextField getY() {
+        return y;
+    }
+
+    public TextField getZ() {
+        return z;
     }
 
 }

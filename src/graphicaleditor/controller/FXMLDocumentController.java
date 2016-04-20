@@ -5,10 +5,15 @@
  */
 package graphicaleditor.controller;
 
+import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.gentopo.TorusController;
+import graphicaleditor.controller.gentopo.MeshController;
+import graphicaleditor.controller.gentopo.RingController;
+import graphicaleditor.controller.gentopo.StarController;
 import graphicaleditor.controller.benchmark.Graph500Controller;
 import graphicaleditor.controller.benchmark.HimenoController;
 import graphicaleditor.controller.benchmark.NASController;
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.controller.interfaces.IHandler;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.Host;
@@ -85,8 +90,6 @@ public class FXMLDocumentController implements Initializable {
         provideExitFunctionality();
     }
 
-    
-
     /**
      * Handle action related to input (in this case specifically only responds
      * to keyboard event CTRL-A).
@@ -150,7 +153,7 @@ public class FXMLDocumentController implements Initializable {
     private void newFile() {
         provideNewFileFunctionality();
     }
-    
+
     @FXML
     public void showDialog(boolean isGen, String message, int width, int height, String fxmlName, IHandler okHandler, Stage d, HostView h) {
         if (isGen) {
@@ -167,8 +170,8 @@ public class FXMLDocumentController implements Initializable {
 //            final Stage dialog = new Stage();
             Parent root = (Parent) loader.load();
 
-            DialogController controller
-                    = loader.<DialogController>getController();
+            AbstractDialogController controller
+                    = loader.<AbstractDialogController>getController();
             if (controller instanceof HostDetailController) {
                 HostDetailController c = (HostDetailController) controller;
                 c.setHostView(h);
@@ -184,10 +187,10 @@ public class FXMLDocumentController implements Initializable {
 
                         @Override
                         public void handle(MouseEvent event) {
-
+                            FileChooser chooser = new FileChooser();
+                            selectedFile = chooser.showSaveDialog(null);
+                            
                             if (isGen) {
-                                FileChooser chooser = new FileChooser();
-                                selectedFile = chooser.showSaveDialog(null);
                                 generatePlatformElement();
                             }
                             okHandler.handle(controller);
@@ -215,27 +218,21 @@ public class FXMLDocumentController implements Initializable {
             Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @FXML
     private void genRing() {
         final Stage d = new Stage();
         showDialog(true, "ring", 400, 400, "gentopo/ring", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 RingController c = (RingController) controller;
-                try {
-                        XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        processor.generateRingTopo(c.getAsId().getText(), Integer.parseInt(c.getNumOfHost().getText()));
-                        processor.parse();
-                        graphicalModeController.renderOutsideView(processor);
-                    } catch (SAXException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParserConfigurationException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+
+                XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
+                processor.generateRingTopo(c.getAsId().getText(), Integer.parseInt(c.getNumOfHost().getText()));
+                processor.parse();
+                graphicalModeController.renderOutsideView(processor);
+
             }
         }, d, null);
     }
@@ -246,51 +243,37 @@ public class FXMLDocumentController implements Initializable {
         showDialog(true, "star", 400, 400, "gentopo/star", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 StarController c = (StarController) controller;
-                try {
-                        XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        ASView as = new ASView(null, c.getAsId().getText());
-                        processor.generateStarTopo(false, as, Integer.parseInt(c.getNumOfHost().getText()),
-                                "", "", 0, 0, 0);
-                        processor.parse();
-                        graphicalModeController.renderOutsideView(processor);
-                        textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
-                    } catch (SAXException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParserConfigurationException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
+                ASView as = new ASView(null, c.getAsId().getText());
+                processor.generateStarTopo(false, as, Integer.parseInt(c.getNumOfHost().getText()),
+                        "", "", 0, 0, 0);
+                processor.parse();
+                graphicalModeController.renderOutsideView(processor);
+                textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
+
             }
         }, d, null);
     }
 
     @FXML
     private void genTorus() {
-        
+
         final Stage d = new Stage();
         showDialog(true, "torus", 400, 400, "gentopo/torus", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 TorusController c = (TorusController) controller;
-                try {
-                        XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        processor.generateTorusTopo(c.getAsId().getText(),
-                                Integer.parseInt(c.getX().getText()),
-                                Integer.parseInt(c.getY().getText()),
-                                Integer.parseInt(c.getZ().getText()));
-                        processor.parse();
-                        graphicalModeController.renderOutsideView(processor);
-                    } catch (SAXException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParserConfigurationException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
+                processor.generateTorusTopo(c.getAsId().getText(),
+                        Integer.parseInt(c.getX().getText()),
+                        Integer.parseInt(c.getY().getText()),
+                        Integer.parseInt(c.getZ().getText()));
+                processor.parse();
+                graphicalModeController.renderOutsideView(processor);
+
             }
         }, d, null);
     }
@@ -301,25 +284,31 @@ public class FXMLDocumentController implements Initializable {
         showDialog(true, "genMesh", 400, 400, "gentopo/mesh", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 MeshController c = (MeshController) controller;
-                try {
-                    XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                    processor.generateMeshTopo(c.getAsId().getText(),
-                            Integer.parseInt(c.getX().getText()),
-                            Integer.parseInt(c.getY().getText()),
-                            Integer.parseInt(c.getZ().getText()));
-                    processor.parse();
-                    graphicalModeController.renderOutsideView(processor);
-                } catch (SAXException ex) {
-                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ParserConfigurationException ex) {
-                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
+                processor.generateMeshTopo(c.getAsId().getText(),
+                        Integer.parseInt(c.getX().getText()),
+                        Integer.parseInt(c.getY().getText()),
+                        Integer.parseInt(c.getZ().getText()));
+                processor.parse();
+                graphicalModeController.renderOutsideView(processor);
+
             }
         }, d, null);
+    }
+
+    private void generateBMElement(String type) {
+        try {
+            FileWriter fileWriter = null;
+
+            fileWriter = new FileWriter(selectedFile);
+            fileWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                    + "<benchmark version=\"3\" type=\"" + type + "\" >" + "</benchmark>");
+            fileWriter.close();
+        } catch (IOException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @FXML
@@ -328,35 +317,46 @@ public class FXMLDocumentController implements Initializable {
         showDialog(false, "himeno", 400, 200, "benchmark/himeno", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 HimenoController c = (HimenoController) controller;
-                
+                generateBMElement("himeno");
+                XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
+                p.genHimenoBM(Integer.parseInt(c.getNumOfProcs().getText()));
             }
         }, d, null);
     }
-    
+
     @FXML
     private void graph500BM() {
         final Stage d = new Stage();
         showDialog(false, "graph500", 400, 400, "benchmark/graph500", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 Graph500Controller c = (Graph500Controller) controller;
-                
+                generateBMElement("graph500");
+                XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
+                p.genGraph500BM(Integer.parseInt(c.getNumprocs().getText()), 
+                        Integer.parseInt(c.getScale().getText()), 
+                        Integer.parseInt(c.getEdgeFactor().getText()),
+                        Integer.parseInt(c.getEngine().getText()));
             }
         }, d, null);
     }
-    
+
     @FXML
     private void NASBM() {
         final Stage d = new Stage();
         showDialog(false, "NAS", 400, 400, "benchmark/nas", new IHandler() {
 
             @Override
-            public void handle(DialogController controller) {
+            public void handle(AbstractDialogController controller) {
                 NASController c = (NASController) controller;
-                
+                generateBMElement("NAS");
+                XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
+                p.genNASBM(c.getKernelCombobox().getValue(), 
+                        c.getClassCombobox().getValue(), 
+                        (c.getNumprocsCombobox().getValue()));
             }
         }, d, null);
     }
@@ -406,7 +406,7 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    public void generatePlatformElement() {
+    private void generatePlatformElement() {
         try {
             FileWriter fileWriter = null;
 

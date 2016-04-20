@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package graphicaleditor.controller;
+package graphicaleditor.controller.xml;
 
+import graphicaleditor.controller.GraphicalModeController;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.ClusterView;
 import graphicaleditor.model.HostView;
@@ -55,14 +56,22 @@ public class XMLProcessor {
 
     }
 
-    public XMLProcessor(String fileName) throws SAXException, IOException, ParserConfigurationException {
-        inputFile = new File(fileName);
-        System.out.println("filename: " + fileName);
-        DocumentBuilderFactory dbFactory
-                = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        doc = dBuilder.parse(inputFile);
-        doc.getDocumentElement().normalize();
+    public XMLProcessor(String fileName)  {
+        try {
+            inputFile = new File(fileName);
+            System.out.println("filename: " + fileName);
+            DocumentBuilderFactory dbFactory
+                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+        } catch (SAXException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void saveXml(File inputFile) throws TransformerException {
@@ -100,7 +109,7 @@ public class XMLProcessor {
         doc.appendChild(ele);
     }
 
-    public void addHostXml(ASView as, HostView host) throws SAXException, IOException, ParserConfigurationException, TransformerException {
+    public void addHostXml(ASView as, HostView host) {
 
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -118,8 +127,12 @@ public class XMLProcessor {
             }
         }
 
-        // write the content on file
-        saveXml(inputFile);
+        try {
+            // write the content on file
+            saveXml(inputFile);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -221,15 +234,8 @@ public class XMLProcessor {
         e.setAttribute("coordinates", String.valueOf(newHost.getCoordinates()));
 
         if (reParse) {
-            try {
                 parse();
-            } catch (SAXException ex) {
-                Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParserConfigurationException ex) {
-                Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
         }
     }
 
@@ -251,7 +257,7 @@ public class XMLProcessor {
         return n;
     }
 
-    public void removeASXml(ASView as) throws TransformerException {
+    public void removeASXml(ASView as) {
         NodeList nList = doc.getElementsByTagName("AS");
         Element rmv = null;
         for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -269,7 +275,12 @@ public class XMLProcessor {
         if (rmv != null) {
             doc.getDocumentElement().removeChild(rmv);
         }
-        saveXml(inputFile);
+        
+        try {
+            saveXml(inputFile);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void removeRouteXml(RouteView rv) {
@@ -541,7 +552,7 @@ public class XMLProcessor {
 //        }
 //        return n;
 //    }
-    public void parse() throws SAXException, IOException, ParserConfigurationException {
+    public void parse() {
 
         NodeList nList = doc.getElementsByTagName("AS");
 //        ASView as = null;
@@ -1037,6 +1048,60 @@ public class XMLProcessor {
 //                    }
                 }
             }
+        }
+    }
+    
+    //////////////////////////////////////////////////////////////
+    // for Benchmarking
+    public void genHimenoBM(int numprocs) {
+        Element n = doc.createElement("numprocs");
+        n.setAttribute("value", String.valueOf(numprocs));
+        doc.getDocumentElement().appendChild(n);
+        
+        try {
+            saveXml(inputFile);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void genGraph500BM(int numprocs, int scale, int edgeFactor, int engine) {
+        Element num = doc.createElement("numprocs");
+        num.setAttribute("value", String.valueOf(numprocs));
+        Element sc = doc.createElement("scale");
+        sc.setAttribute("value", String.valueOf(scale));
+        Element edge = doc.createElement("edgefactor");
+        edge.setAttribute("value", String.valueOf(edgeFactor));
+        Element eng = doc.createElement("engine");
+        eng.setAttribute("value", String.valueOf(engine));
+        doc.getDocumentElement().appendChild(num);
+        doc.getDocumentElement().appendChild(sc);
+        doc.getDocumentElement().appendChild(edge);
+        doc.getDocumentElement().appendChild(eng);
+        
+        try {
+            saveXml(inputFile);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void genNASBM(String kernel, String klass, int numprocs) {
+        Element ker = doc.createElement("kernel");
+        ker.setAttribute("value", String.valueOf(kernel));
+        Element kl = doc.createElement("class");
+        kl.setAttribute("value", String.valueOf(klass));
+        Element num = doc.createElement("numprocs");
+        num.setAttribute("value", String.valueOf(numprocs));
+
+        doc.getDocumentElement().appendChild(ker);
+        doc.getDocumentElement().appendChild(kl);
+        doc.getDocumentElement().appendChild(num);
+        
+        try {
+            saveXml(inputFile);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

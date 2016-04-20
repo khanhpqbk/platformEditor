@@ -6,7 +6,7 @@
 
 package graphicaleditor.controller.benchmark;
 
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
  *
  * @author KHANH
  */
-public class Graph500Controller extends DialogController {
+public class Graph500Controller extends AbstractDialogController {
     @FXML
     private TextField numprocs;
     

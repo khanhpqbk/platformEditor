@@ -5,7 +5,7 @@
  */
 package graphicaleditor.controller.benchmark;
 
-import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.interfaces.AbstractDialogController;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -20,7 +20,7 @@ import javafx.scene.control.ComboBox;
  *
  * @author KHANH
  */
-public class NASController extends DialogController {
+public class NASController extends AbstractDialogController {
 
     @FXML
     private ComboBox<String> kernelCombobox;

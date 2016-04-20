@@ -13,5 +13,5 @@ import javafx.fxml.Initializable;
  * @author KHANH
  */
 public interface IHandler {
-    void handle(DialogController controller);
+    void handle(AbstractDialogController controller);
 }
