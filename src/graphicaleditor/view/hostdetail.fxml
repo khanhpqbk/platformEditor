@@ -126,8 +126,8 @@
             <TextField fx:id="core" layoutX="0.0" layoutY="-11.0" prefWidth="274.0" text="core" />
           </children>
         </Group>
-        <Button fx:id="btnOk" mnemonicParsing="false" prefWidth="56.0" text="Ok" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-        <Button fx:id="btnCancel" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+        <Button fx:id="okBtn" mnemonicParsing="false" prefWidth="56.0" text="Ok" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="2" GridPane.rowIndex="8" />
         <Group id="Group" GridPane.columnIndex="1" GridPane.rowIndex="7">
           <children>
             <Label fx:id="warningLbl"  layoutX="-141.0" layoutY="-8.0" prefWidth="415.0" text="" />

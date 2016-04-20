@@ -6,6 +6,7 @@
 
 package graphicaleditor.controller;
 
+import graphicaleditor.controller.interfaces.DialogController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -21,35 +22,13 @@ import javafx.scene.control.TextField;
  *
  * @author KHANH
  */
-public class StarController implements Initializable {
+public class StarController extends DialogController {
     
     @FXML
     private TextField asId;
     
     @FXML
     private TextField numOfHost;
-    
-    @FXML
-    private Button okBtn;
-    
-    @FXML
-    private Button cancelBtn;
-    
-    @FXML
-    private FXMLDocumentController parentController;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        
-    }
-
-    public Button getOkBtn() {
-        return okBtn;
-    }
-
-    public Button getCancelBtn() {
-        return cancelBtn;
-    }
 
     public TextField getAsId() {
         return asId;
@@ -57,11 +36,6 @@ public class StarController implements Initializable {
 
     public TextField getNumOfHost() {
         return numOfHost;
-    }
-
-    
-    public void setParentController(FXMLDocumentController c) {
-        this.parentController = c;
     }
     
 }

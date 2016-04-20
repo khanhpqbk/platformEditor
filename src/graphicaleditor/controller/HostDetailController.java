@@ -5,6 +5,7 @@
  */
 package graphicaleditor.controller;
 
+import graphicaleditor.controller.interfaces.DialogController;
 import graphicaleditor.model.HostView;
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +27,7 @@ import org.xml.sax.SAXException;
  *
  * @author KHANH
  */
-public class HostDetailController implements Initializable {
+public class HostDetailController extends DialogController {
 
     @FXML
     private TextField id;
@@ -45,12 +46,6 @@ public class HostDetailController implements Initializable {
 
     @FXML
     private TextField availability;
-
-    @FXML
-    private Button btnOk;
-
-    @FXML
-    private Button btnCancel;
     
     @FXML
     private Label warningLbl;
@@ -83,10 +78,10 @@ public class HostDetailController implements Initializable {
                 if (p.getHostRouterIdList().contains(newValue)) {
                     warningLbl.setText("Duplicate host id!");
                     warningLbl.setTextFill(Color.RED);
-                    btnOk.setDisable(true);
+                    okBtn.setDisable(true);
                 } else {
                     warningLbl.setText("");
-                    btnOk.setDisable(false);
+                    okBtn.setDisable(false);
                 }
             } catch (SAXException ex) {
                 Logger.getLogger(HostDetailController.class.getName()).log(Level.SEVERE, null, ex);
@@ -97,14 +92,6 @@ public class HostDetailController implements Initializable {
             }
            
         });
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        id.setText(hostView.getId());
-//        power.setText(String.valueOf(hostView.getPower()));
-//        state.setText(String.valueOf(hostView.isState()));
     }
 
     public HostView createHostFromFields() {
@@ -129,14 +116,6 @@ public class HostDetailController implements Initializable {
 
     public TextField getState() {
         return state;
-    }
-
-    public Button getBtnOk() {
-        return btnOk;
-    }
-
-    public Button getBtnCancel() {
-        return btnCancel;
     }
 
     public HostView getHostView() {

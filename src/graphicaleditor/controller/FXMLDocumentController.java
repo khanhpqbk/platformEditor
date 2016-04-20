@@ -5,6 +5,11 @@
  */
 package graphicaleditor.controller;
 
+import graphicaleditor.controller.benchmark.Graph500Controller;
+import graphicaleditor.controller.benchmark.HimenoController;
+import graphicaleditor.controller.benchmark.NASController;
+import graphicaleditor.controller.interfaces.DialogController;
+import graphicaleditor.controller.interfaces.IHandler;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.Host;
 import graphicaleditor.model.HostView;
@@ -27,6 +32,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -64,8 +70,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private MenuItem turnOnOff;
 
-    
-
     /**
      * Handle action related to "About" menu item.
      *
@@ -81,70 +85,7 @@ public class FXMLDocumentController implements Initializable {
         provideExitFunctionality();
     }
 
-    @FXML
-    private void genRing() {
-        graphicalModeController.clearView();
-        textModeController.clearText();
-        System.out.println("gen ring");
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getClassLoader().getResource(
-                            "graphicaleditor/view/ring.fxml"
-                    )
-            );
-            final Stage dialog = new Stage();
-            Parent root = (Parent) loader.load();
-
-            RingController controller
-                    = loader.<RingController>getController();
-            controller.setParentController(this);
-
-            controller.getOkBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-
-                    FileChooser chooser = new FileChooser();
-                    selectedFile = chooser.showSaveDialog(null);
-                    generatePlatformElement();
-                    try {
-                        XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        processor.generateRingTopo(controller.getAsId().getText(), Integer.parseInt(controller.getNumOfHost().getText()));
-                        processor.parse();
-                        graphicalModeController.renderOutsideView(processor);
-                    } catch (SAXException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParserConfigurationException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    dialog.close();
-                    textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
-
-                }
-
-            });
-
-            controller.getCancelBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-//                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    dialog.close();
-                }
-            });
-
-            Scene scene = new Scene(root, 500, 400);
-
-//            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setScene(scene);
-            dialog.show();
-
-        } catch (IOException ex) {
-            Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    
 
     /**
      * Handle action related to input (in this case specifically only responds
@@ -209,37 +150,108 @@ public class FXMLDocumentController implements Initializable {
     private void newFile() {
         provideNewFileFunctionality();
     }
-
+    
     @FXML
-    private void genStar() {
-        graphicalModeController.clearView();
-        textModeController.clearText();
-        System.out.println("gen star");
+    public void showDialog(boolean isGen, String message, int width, int height, String fxmlName, IHandler okHandler, Stage d, HostView h) {
+        if (isGen) {
+            graphicalModeController.clearView();
+            textModeController.clearText();
+        }
+        System.out.println(message);
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getClassLoader().getResource(
-                            "graphicaleditor/view/star.fxml"
+                            "graphicaleditor/view/" + fxmlName + ".fxml"
                     )
             );
-            final Stage dialog = new Stage();
+//            final Stage dialog = new Stage();
             Parent root = (Parent) loader.load();
 
-            StarController controller
-                    = loader.<StarController>getController();
+            DialogController controller
+                    = loader.<DialogController>getController();
+            if (controller instanceof HostDetailController) {
+                HostDetailController c = (HostDetailController) controller;
+                c.setHostView(h);
+                c.init(h);
+            } else if (controller instanceof NASController) {
+                NASController c = (NASController) controller;
+                c.init();
+            }
             controller.setParentController(this);
 
-            controller.getOkBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
+            controller.getOkBtn().setOnMouseClicked(
+                    new EventHandler<MouseEvent>() {
 
-                @Override
-                public void handle(MouseEvent event) {
+                        @Override
+                        public void handle(MouseEvent event) {
 
-                    FileChooser chooser = new FileChooser();
-                    selectedFile = chooser.showSaveDialog(null);
-                    generatePlatformElement();
-                    try {
+                            if (isGen) {
+                                FileChooser chooser = new FileChooser();
+                                selectedFile = chooser.showSaveDialog(null);
+                                generatePlatformElement();
+                            }
+                            okHandler.handle(controller);
+                            d.close();
+                            if (isGen) {
+                                textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
+                            }
+
+                        }
+
+                    }
+            );
+
+            controller.getCancelBtn().setOnMouseClicked((MouseEvent event) -> {
+                d.close();
+            });
+
+            Scene scene = new Scene(root, width, height);
+
+//            dialog.initStyle(StageStyle.UTILITY);
+            d.setScene(scene);
+            d.show();
+
+        } catch (IOException ex) {
+            Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @FXML
+    private void genRing() {
+        final Stage d = new Stage();
+        showDialog(true, "ring", 400, 400, "gentopo/ring", new IHandler() {
+
+            @Override
+            public void handle(DialogController controller) {
+                RingController c = (RingController) controller;
+                try {
                         XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        ASView as = new ASView(null, controller.getAsId().getText());
-                        processor.generateStarTopo(false, as, Integer.parseInt(controller.getNumOfHost().getText()),
+                        processor.generateRingTopo(c.getAsId().getText(), Integer.parseInt(c.getNumOfHost().getText()));
+                        processor.parse();
+                        graphicalModeController.renderOutsideView(processor);
+                    } catch (SAXException ex) {
+                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ParserConfigurationException ex) {
+                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+            }
+        }, d, null);
+    }
+
+    @FXML
+    private void genStar() {
+        final Stage d = new Stage();
+        showDialog(true, "star", 400, 400, "gentopo/star", new IHandler() {
+
+            @Override
+            public void handle(DialogController controller) {
+                StarController c = (StarController) controller;
+                try {
+                        XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
+                        ASView as = new ASView(null, c.getAsId().getText());
+                        processor.generateStarTopo(false, as, Integer.parseInt(c.getNumOfHost().getText()),
                                 "", "", 0, 0, 0);
                         processor.parse();
                         graphicalModeController.renderOutsideView(processor);
@@ -251,64 +263,25 @@ public class FXMLDocumentController implements Initializable {
                     } catch (ParserConfigurationException ex) {
                         Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    dialog.close();
-
-                }
-
-            });
-
-            controller.getCancelBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-//                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    dialog.close();
-                }
-            });
-
-            Scene scene = new Scene(root, 500, 400);
-
-//            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setScene(scene);
-            dialog.show();
-
-        } catch (IOException ex) {
-            Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
+        }, d, null);
     }
 
     @FXML
     private void genTorus() {
-        graphicalModeController.clearView();
-        textModeController.clearText();
-        System.out.println("gen torus");
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getClassLoader().getResource(
-                            "graphicaleditor/view/torus.fxml"
-                    )
-            );
-            final Stage dialog = new Stage();
-            Parent root = (Parent) loader.load();
+        
+        final Stage d = new Stage();
+        showDialog(true, "torus", 400, 400, "gentopo/torus", new IHandler() {
 
-            TorusController controller
-                    = loader.<TorusController>getController();
-            controller.setParentController(this);
-
-            controller.getOkBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-
-                    FileChooser chooser = new FileChooser();
-                    selectedFile = chooser.showSaveDialog(null);
-                    generatePlatformElement();
-                    try {
+            @Override
+            public void handle(DialogController controller) {
+                TorusController c = (TorusController) controller;
+                try {
                         XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        processor.generateTorusTopo(controller.getAsId().getText(),
-                                Integer.parseInt(controller.getX().getText()),
-                                Integer.parseInt(controller.getY().getText()),
-                                Integer.parseInt(controller.getZ().getText()));
+                        processor.generateTorusTopo(c.getAsId().getText(),
+                                Integer.parseInt(c.getX().getText()),
+                                Integer.parseInt(c.getY().getText()),
+                                Integer.parseInt(c.getZ().getText()));
                         processor.parse();
                         graphicalModeController.renderOutsideView(processor);
                     } catch (SAXException ex) {
@@ -318,99 +291,74 @@ public class FXMLDocumentController implements Initializable {
                     } catch (ParserConfigurationException ex) {
                         Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    dialog.close();
-                    textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
-
-                }
-
-            });
-
-            controller.getCancelBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-//                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    dialog.close();
-                }
-            });
-
-            Scene scene = new Scene(root, 500, 400);
-
-//            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setScene(scene);
-            dialog.show();
-
-        } catch (IOException ex) {
-            Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }
+        }, d, null);
     }
 
     @FXML
     private void genMesh() {
-        graphicalModeController.clearView();
-        textModeController.clearText();
-        System.out.println("gen mesh");
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getClassLoader().getResource(
-                            "graphicaleditor/view/mesh.fxml"
-                    )
-            );
-            final Stage dialog = new Stage();
-            Parent root = (Parent) loader.load();
+        final Stage d = new Stage();
+        showDialog(true, "genMesh", 400, 400, "gentopo/mesh", new IHandler() {
 
-            MeshController controller
-                    = loader.<MeshController>getController();
-            controller.setParentController(this);
-
-            controller.getOkBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-
-                    FileChooser chooser = new FileChooser();
-                    selectedFile = chooser.showSaveDialog(null);
-                    generatePlatformElement();
-                    try {
-                        XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
-                        processor.generateMeshTopo(controller.getAsId().getText(),
-                                Integer.parseInt(controller.getX().getText()),
-                                Integer.parseInt(controller.getY().getText()),
-                                Integer.parseInt(controller.getZ().getText()));
-                        processor.parse();
-                        graphicalModeController.renderOutsideView(processor);
-                    } catch (SAXException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ParserConfigurationException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    dialog.close();
-                    textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
-
+            @Override
+            public void handle(DialogController controller) {
+                MeshController c = (MeshController) controller;
+                try {
+                    XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
+                    processor.generateMeshTopo(c.getAsId().getText(),
+                            Integer.parseInt(c.getX().getText()),
+                            Integer.parseInt(c.getY().getText()),
+                            Integer.parseInt(c.getZ().getText()));
+                    processor.parse();
+                    graphicalModeController.renderOutsideView(processor);
+                } catch (SAXException ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParserConfigurationException ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+        }, d, null);
+    }
 
-            });
+    @FXML
+    private void himenoBM() {
+        final Stage d = new Stage();
+        showDialog(false, "himeno", 400, 200, "benchmark/himeno", new IHandler() {
 
-            controller.getCancelBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(DialogController controller) {
+                HimenoController c = (HimenoController) controller;
+                
+            }
+        }, d, null);
+    }
+    
+    @FXML
+    private void graph500BM() {
+        final Stage d = new Stage();
+        showDialog(false, "graph500", 400, 400, "benchmark/graph500", new IHandler() {
 
-                @Override
-                public void handle(MouseEvent event) {
-//                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    dialog.close();
-                }
-            });
+            @Override
+            public void handle(DialogController controller) {
+                Graph500Controller c = (Graph500Controller) controller;
+                
+            }
+        }, d, null);
+    }
+    
+    @FXML
+    private void NASBM() {
+        final Stage d = new Stage();
+        showDialog(false, "NAS", 400, 400, "benchmark/nas", new IHandler() {
 
-            Scene scene = new Scene(root, 500, 400);
-
-//            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setScene(scene);
-            dialog.show();
-
-        } catch (IOException ex) {
-            Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            @Override
+            public void handle(DialogController controller) {
+                NASController c = (NASController) controller;
+                
+            }
+        }, d, null);
     }
 
     @FXML
@@ -418,13 +366,13 @@ public class FXMLDocumentController implements Initializable {
         if (graphicalModeController.isRoomMode()) {
             graphicalModeController.setRoomMode(false);
             graphicalModeController.clearView();
-            
+
             graphicalModeController.renderInsideView(graphicalModeController.getASNow());
             turnOnOff.setText("Turn on");
         } else {
             graphicalModeController.setRoomMode(true);
             graphicalModeController.clearView();
-            
+
             graphicalModeController.renderInsideView(graphicalModeController.getASNow());
             turnOnOff.setText("Turn off");
         }

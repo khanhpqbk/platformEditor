@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" minHeight="182.0" prefHeight="300.0" prefWidth="305.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.benchmark.NASController">
+  <children>
+    <GridPane layoutX="14.0" layoutY="14.0" prefHeight="286.0" prefWidth="291.0">
+      <children>
+        <Group id="Group" GridPane.columnIndex="0" GridPane.rowIndex="0">
+          <children>
+            <HBox id="HBox" alignment="CENTER" layoutX="0.0" layoutY="-26.0" spacing="5.0">
+              <children>
+                <Label prefWidth="233.0" text="               Enter parameters for NAS" textAlignment="CENTER" underline="false" />
+              </children>
+            </HBox>
+          </children>
+        </Group>
+        <Label prefWidth="137.0" text="Kernel" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label prefWidth="86.9998779296875" text="Class" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Button fx:id="okBtn" mnemonicParsing="false" prefWidth="80.0" text="Ok" textAlignment="LEFT" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label prefWidth="137.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <ComboBox id="KernelCb" fx:id="kernelCombobox" editable="false" prefHeight="21.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="bt" />
+              <String fx:value="cg" />
+              <String fx:value="ep" />
+              <String fx:value="is" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <ComboBox id="KernelCb" fx:id="classCombobox" editable="false" prefHeight="21.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="S" />
+              <String fx:value="A" />
+              <String fx:value="B" />
+              <String fx:value="C" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <ComboBox id="KernelCb" fx:id="numprocsCombobox" editable="false" prefHeight="21.0" prefWidth="123.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="1" />
+              <String fx:value="2" />
+              <String fx:value="4" />
+              <String fx:value="8" />
+              <String fx:value="16" />
+              <String fx:value="32" />
+              <String fx:value="64" />
+              <String fx:value="128" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.0" minWidth="10.0" prefWidth="110.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="137.0" minWidth="10.0" prefWidth="137.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+  </children>
+</AnchorPane>

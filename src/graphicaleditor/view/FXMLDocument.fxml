@@ -49,6 +49,15 @@
             <MenuItem text="Add restricted area" onAction="#addRestrictedArea" />
           </items>
         </Menu>
+        <Menu text="Benchmarking">
+          <items>
+            <MenuItem text="Himeno" onAction="#himenoBM" />
+            <MenuItem text="Graph500" onAction="#graph500BM"  />
+            <MenuItem text="NAS" onAction="#NASBM"  />
+            <SeparatorMenuItem />
+            <MenuItem text="More"  />
+          </items>
+        </Menu>
         <Menu text="Help">
           <items>
             <MenuItem disable="true" text="Search" />
