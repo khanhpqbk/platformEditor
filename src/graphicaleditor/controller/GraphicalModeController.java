@@ -399,112 +399,86 @@ public class GraphicalModeController implements Initializable {
             });
 
 //            imgView.setOnMouseReleased(view);
-            view.setOnDragDone(new EventHandler<DragEvent>() {
-                public void handle(DragEvent event) {
-                    /* the drag and drop gesture ended */
-                    /* if the data was successfully moved, clear it */
-                    if (event.getTransferMode() == TransferMode.MOVE) {
+            view.setOnDragDone((DragEvent event) -> {
+                if (event.getTransferMode() == TransferMode.MOVE) {
 //            source.setText("");
-                        System.out.println("drag done. as view");
-                    }
-                    event.consume();
+                    System.out.println("drag done. as view");
                 }
+                event.consume();
             });
 
-            view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        if (mouseEvent.getClickCount() == 2) {
-                            if (view instanceof ASView) {
-                                ASView asView = (ASView) view;
-                                showASDetails(asView);
-                            } else if (view instanceof HostView) {
-                                HostView hostView = (HostView) view;
-                                showHostDetails(hostView);
-                            } else if (view instanceof RouterView) {
-                                RouterView routerView = (RouterView) view;
-                                showRouterDetails(routerView);
-                            }
-
-                        }
-                    } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-                        System.out.println("chuot phai");
+            view.setOnMouseClicked((MouseEvent mouseEvent) -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
                         if (view instanceof ASView) {
-                            ASView as = (ASView) view;
-                            final ContextMenu contextMenu = new ContextMenu();
-                            MenuItem gointo = new MenuItem("Go into");
-                            MenuItem delete = new MenuItem("Delete");
-                            contextMenu.getItems().addAll(gointo, delete);
-                            gointo.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    System.out.println("go Into...");
-                                    clearView();
-                                    asNow = as;
-                                    isOutside = false;
-                                    renderInsideView(as);
-                                }
-                            });
-
-                            delete.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    System.out.println("delete AS...");
-                                    anchorPane.getChildren().remove(view);
-                                    parentController.getTextModeController().removeASXml((ASView) view);
-                                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
-                                }
-                            });
-
-                            contextMenu.show(anchorPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                            ASView asView = (ASView) view;
+                            showASDetails(asView);
+                        } else if (view instanceof HostView) {
+                            HostView hostView = (HostView) view;
+                            showHostDetails(hostView);
+                        } else if (view instanceof RouterView) {
+                            RouterView routerView = (RouterView) view;
+                            showRouterDetails(routerView);
                         }
+                        
                     }
-                    mouseEvent.consume();
+                } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+                    System.out.println("chuot phai");
+                    if (view instanceof ASView) {
+                        ASView as = (ASView) view;
+                        final ContextMenu contextMenu = new ContextMenu();
+                        MenuItem gointo = new MenuItem("Go into");
+                        MenuItem delete = new MenuItem("Delete");
+                        contextMenu.getItems().addAll(gointo, delete);
+                        gointo.setOnAction((ActionEvent event) -> {
+                            System.out.println("go Into...");
+                            clearView();
+                            asNow = as;
+                            isOutside = false;
+                            renderInsideView(as);
+                        });
+                        
+                        delete.setOnAction((ActionEvent event) -> {
+                            System.out.println("delete AS...");
+                            anchorPane.getChildren().remove(view);
+                            parentController.getTextModeController().removeASXml((ASView) view);
+                            parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                        });
+                        
+                        contextMenu.show(anchorPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    }
                 }
-
+                mouseEvent.consume();
             });
         }
 
-        anchorPane.setOnDragOver(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data is dragged over the target */
-                /* accept it only if it is not dragged from the same node 
-                 * and if it has a string data */
-//                if (event.getGestureSource() != anchorPane
-//                        && event.getDragboard().hasString()) {
-                    /* allow for both copying and moving, whatever user chooses */
-                event.acceptTransferModes(TransferMode.ANY);
+        anchorPane.setOnDragOver((DragEvent event) -> {
+            event.acceptTransferModes(TransferMode.ANY);
 //                }
-
-                event.consume();
-
-                System.out.println("drag over. as view");
-            }
+            
+            event.consume();
+            
+            System.out.println("drag over. as view");
         });
 
-        anchorPane.setOnDragDropped(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data dropped */
-                /* if there is a string data on dragboard, read it and use it */
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.getString().equalsIgnoreCase("frommovingas")) {
-                    ImageView view = (ImageView) event.getGestureSource();
-                    System.out.println("drag dropped. as view ");
-                    view.setLayoutX(event.getX());
-                    view.setLayoutY(event.getY());
-
-                    success = true;
-                } else if (db.getString().equalsIgnoreCase("frompallete")) {
-                    workPallete(event, isOutside);
-                }
-                /* let the source know whether the string was successfully 
-                 * transferred and used */
-                event.setDropCompleted(success);
-
-                event.consume();
+        anchorPane.setOnDragDropped((DragEvent event) -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.getString().equalsIgnoreCase("frommovingas")) {
+                ImageView view = (ImageView) event.getGestureSource();
+                System.out.println("drag dropped. as view ");
+                view.setLayoutX(event.getX());
+                view.setLayoutY(event.getY());
+                
+                success = true;
+            } else if (db.getString().equalsIgnoreCase("frompallete")) {
+                workPallete(event, isOutside);
             }
+            /* let the source know whether the string was successfully
+            * transferred and used */
+            event.setDropCompleted(success);
+            
+            event.consume();
         });
 
     }
@@ -523,121 +497,89 @@ public class GraphicalModeController implements Initializable {
             Node node = anchorPane.getChildren().get(i);
             if (node instanceof ImageView) {
                 final ImageView view = (ImageView) anchorPane.getChildren().get(i);
-                view.setOnDragDetected(new EventHandler<MouseEvent>() {
-                    public void handle(MouseEvent event) {
-                        /* drag was detected, start a drag-and-drop gesture*/
-                        /* allow any transfer mode */
-                        Dragboard db = view.startDragAndDrop(TransferMode.ANY);
-
-                        /* Put a string on a dragboard */
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString("frommovinghostorrouter");
-                        db.setContent(content);
-
-                        event.consume();
-                    }
-
+                view.setOnDragDetected((MouseEvent event) -> {
+                    Dragboard db = view.startDragAndDrop(TransferMode.ANY);
+                    
+                    /* Put a string on a dragboard */
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString("frommovinghostorrouter");
+                    db.setContent(content);
+                    
+                    event.consume();
                 });
 
 //            imgView.setOnMouseReleased(view);
-                view.setOnDragDone(new EventHandler<DragEvent>() {
-                    public void handle(DragEvent event) {
-                        /* the drag and drop gesture ended */
-                        /* if the data was successfully moved, clear it */
-                        if (event.getTransferMode() == TransferMode.MOVE) {
+                view.setOnDragDone((DragEvent event) -> {
+                    if (event.getTransferMode() == TransferMode.MOVE) {
 //            source.setText("");
-                            System.out.println("drag done. host view");
-                        }
-                        event.consume();
+                        System.out.println("drag done. host view");
                     }
+                    event.consume();
                 });
 
-                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        System.out.println("mouse clicked on view");
-                        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                            if (mouseEvent.getClickCount() == 2) {
-                                if (view instanceof HostView) {
-                                    HostView hostView = (HostView) view;
-                                    showHostDetails(hostView);
-                                } else if (view instanceof RouterView) {
-                                    RouterView routerView = (RouterView) view;
-                                    showRouterDetails(routerView);
-                                }
-                            } else if (mouseEvent.getClickCount() == 1) {
-                                prepareAddRoute(view);
-
+                view.setOnMouseClicked((MouseEvent mouseEvent) -> {
+                    System.out.println("mouse clicked on view");
+                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                        if (mouseEvent.getClickCount() == 2) {
+                            if (view instanceof HostView) {
+                                HostView hostView = (HostView) view;
+                                showHostDetails(hostView);
+                            } else if (view instanceof RouterView) {
+                                RouterView routerView = (RouterView) view;
+                                showRouterDetails(routerView);
                             }
-                        } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-                            System.out.println("chuot phai on host");
-                            deleteRouterHostView(view, mouseEvent);
-
-                            mouseEvent.consume();
+                        } else if (mouseEvent.getClickCount() == 1) {
+                            prepareAddRoute(view);
+                            
                         }
+                    } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+                        System.out.println("chuot phai on host");
+                        deleteRouterHostView(view, mouseEvent);
+                        
+                        mouseEvent.consume();
                     }
                 });
             }
 
-            anchorPane.setOnDragOver(new EventHandler<DragEvent>() {
-                public void handle(DragEvent event) {
-                    /* data is dragged over the target */
-                    /* accept it only if it is not dragged from the same node 
-                     * and if it has a string data */
-//                if (event.getGestureSource() != anchorPane
-//                        && event.getDragboard().hasString()) {
-                    /* allow for both copying and moving, whatever user chooses */
-                    event.acceptTransferModes(TransferMode.ANY);
+            anchorPane.setOnDragOver((DragEvent event) -> {
+                event.acceptTransferModes(TransferMode.ANY);
 //                }
-
-                    event.consume();
-
-                    System.out.println("drag over. host view");
-                }
+                
+                event.consume();
+                
+                System.out.println("drag over. host view");
             });
 
-            anchorPane.setOnDragDropped(new EventHandler<DragEvent>() {
-                public void handle(DragEvent event) {
-                    /* data dropped */
-                    /* if there is a string data on dragboard, read it and use it */
-                    Dragboard db = event.getDragboard();
-                    boolean success = false;
-                    if (db.getString().equalsIgnoreCase("frommovinghostorrouter")) {
-
-                        ImageView view = (ImageView) event.getGestureSource();
-                        System.out.println("drag dropped. host view ");
-                        view.setLayoutX(event.getX());
-                        view.setLayoutY(event.getY());
-
-                        if (asNow != null) {
-                            if (!roomMode) {
-                                clearLines();
-                                clearPolyLines();
-
-                                for (RouteView r : asNow.getRouteList()) {
-                                    addRouteView(r, asNow);
-                                }
-                            } else if (roomMode) {
-                                clearPolyLines();
-                                clearLines();
-
-                                for (RouteViewRoom r : asNow.getRouteRoomList()) {
-                                    addRouteViewRoom(r, asNow, null);
-                                }
+            anchorPane.setOnDragDropped((DragEvent event) -> {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.getString().equalsIgnoreCase("frommovinghostorrouter")) {
+                    ImageView view = (ImageView) event.getGestureSource();
+                    System.out.println("drag dropped. host view ");
+                    view.setLayoutX(event.getX());
+                    view.setLayoutY(event.getY());
+                    if (asNow != null) {
+                        if (!roomMode) {
+                            clearLines();
+                            clearPolyLines();
+                            for (RouteView r1 : asNow.getRouteList()) {
+                                addRouteView(r1, asNow);
+                            }
+                        } else if (roomMode) {
+                            clearPolyLines();
+                            clearLines();
+                            for (RouteViewRoom r2 : asNow.getRouteRoomList()) {
+                                addRouteViewRoom(r2, asNow, null);
                             }
                         }
-                    } else if (db.getString().equalsIgnoreCase("frompallete")) {
-                        workPallete(event, isOutside);
-
                     }
-                    success = true;
-
-                    /* let the source know whether the string was successfully 
-                     * transferred and used */
-                    event.setDropCompleted(success);
-
-                    event.consume();
+                } else if (db.getString().equalsIgnoreCase("frompallete")) {
+                    workPallete(event, isOutside);
+                    
                 }
+                success = true;
+                event.setDropCompleted(success);
+                event.consume();
             });
 
         }
@@ -700,32 +642,25 @@ public class GraphicalModeController implements Initializable {
         if (view instanceof RouterView) {
             RouterView router = (RouterView) view;
 
-            delete.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    System.out.println("delete router...");
-                    anchorPane.getChildren().remove(view);
-                    asNow.getRouterList().remove(view);
-                    rmvRoute(view);
-                    parentController.getTextModeController().removeRouterXml(router);
-                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
-
-                }
+            delete.setOnAction((ActionEvent event) -> {
+                System.out.println("delete router...");
+                anchorPane.getChildren().remove(view);
+                asNow.getRouterList().remove(view);
+                rmvRoute(view);
+                parentController.getTextModeController().removeRouterXml(router);
+                parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
             });
 
         } else if (view instanceof HostView) {
             HostView host = (HostView) view;
 
-            delete.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    System.out.println("delete Host...");
-                    anchorPane.getChildren().remove(view);
-                    asNow.getHostList().remove(view);
-                    rmvRoute(view);
-                    parentController.getTextModeController().removeHostXml(asNow, host);
-                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
-                }
+            delete.setOnAction((ActionEvent event) -> {
+                System.out.println("delete Host...");
+                anchorPane.getChildren().remove(view);
+                asNow.getHostList().remove(view);
+                rmvRoute(view);
+                parentController.getTextModeController().removeHostXml(asNow, host);
+                parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
             });
 
         }
@@ -817,7 +752,7 @@ public class GraphicalModeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        isOutside = true;
         enablePalleteFunction();
     }
 
@@ -825,84 +760,58 @@ public class GraphicalModeController implements Initializable {
         for (int i = 0; i < gridPane.getChildren().size(); i++) {
 //            Image
             Node node = gridPane.getChildren().get(i);
-            node.setOnDragDetected(new EventHandler<MouseEvent>() {
-                public void handle(MouseEvent event) {
-                    /* drag was detected, start a drag-and-drop gesture*/
-                    /* allow any transfer mode */
-                    Dragboard db = node.startDragAndDrop(TransferMode.ANY);
-
-                    /* Put a string on a dragboard */
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString("frompallete");
-                    db.setContent(content);
-
-                    event.consume();
-
-                    System.out.println("start drag on node ");
-                }
-
+            node.setOnDragDetected((MouseEvent event) -> {
+                Dragboard db = node.startDragAndDrop(TransferMode.ANY);
+                
+                /* Put a string on a dragboard */
+                ClipboardContent content = new ClipboardContent();
+                content.putString("frompallete");
+                db.setContent(content);
+                
+                event.consume();
+                
+                System.out.println("start drag on node ");
             });
 
-            node.setOnDragDone(new EventHandler<DragEvent>() {
-                public void handle(DragEvent event) {
-                    /* the drag and drop gesture ended */
-                    /* if the data was successfully moved, clear it */
-                    if (event.getTransferMode() == TransferMode.MOVE) {
+            node.setOnDragDone((DragEvent event) -> {
+                if (event.getTransferMode() == TransferMode.MOVE) {
 //            source.setText("");
-                        System.out.println("drag done. from pallete");
-                    }
-                    event.consume();
+                    System.out.println("drag done. from pallete");
                 }
+                event.consume();
             });
 
             if (GridPane.getRowIndex(node) == 3) {
-                node.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent event) {
-                        System.out.println("click on add route");
-                        addRoute = 1; // chuyen sang trang thai start add route
-                    }
+                node.setOnMouseClicked((MouseEvent event) -> {
+                    System.out.println("click on add route");
+                    addRoute = 1;
                 });
             }
         }
 
-        anchorPane.setOnDragOver(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data is dragged over the target */
-                /* accept it only if it is not dragged from the same node 
-                 * and if it has a string data */
-//                if (event.getGestureSource() != anchorPane
-//                        && event.getDragboard().hasString()) {
-                    /* allow for both copying and moving, whatever user chooses */
-                event.acceptTransferModes(TransferMode.ANY);
+        anchorPane.setOnDragOver((DragEvent event) -> {
+            event.acceptTransferModes(TransferMode.ANY);
 //                }
-
-                event.consume();
-
-                System.out.println("drag over. from pallete");
-            }
+            
+            event.consume();
+            
+            System.out.println("drag over. from pallete");
         });
 
-        anchorPane.setOnDragDropped(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data dropped */
-                /* if there is a string data on dragboard, read it and use it */
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.getString().equals("frompallete")) {
-                    System.out.println("drag dropped frompallete");
-                    workPallete(event, isOutside);
-
-                    success = true;
-                }
-                /* let the source know whether the string was successfully 
-                 * transferred and used */
-                event.setDropCompleted(success);
-
-                event.consume();
+        anchorPane.setOnDragDropped((DragEvent event) -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.getString().equals("frompallete")) {
+                System.out.println("drag dropped frompallete");
+                workPallete(event, isOutside);
+                
+                success = true;
             }
-
+            /* let the source know whether the string was successfully
+            * transferred and used */
+            event.setDropCompleted(success);
+            
+            event.consume();
         });
 
         // Ađd Route
@@ -928,19 +837,15 @@ public class GraphicalModeController implements Initializable {
 
     private void showHostDetails(HostView h) {
         final Stage dialog = new Stage();
-        IHandler handler = new IHandler() {
-
-            @Override
-            public void handle(AbstractDialogController controller) {
-                HostDetailController c = (HostDetailController) controller;
-                
-                HostView newHost = c.createHostFromFields();
-                
-                parentController.getTextModeController().modifyHostXml(newHost, h.getmId());
-                saveRouteFromFields(asNow, newHost, h);
-                saveHostFromFields(h, newHost);
-                parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
-            }
+        IHandler handler = (AbstractDialogController controller) -> {
+            HostDetailController c = (HostDetailController) controller;
+            
+            HostView newHost = c.createHostFromFields();
+            
+            parentController.getTextModeController().modifyHostXml(newHost, h.getmId());
+            saveRouteFromFields(asNow, newHost, h);
+            saveHostFromFields(h, newHost);
+            parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
         };
         
         parentController.showDialog(false, "host details", 500, 400, "hostdetail", handler, dialog, h);
@@ -1031,63 +936,49 @@ public class GraphicalModeController implements Initializable {
         if (roomMode) {
 //            plgs = new ArrayList<>();
             addRareaCount = 0;
-            anchorPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (addRareaCount == 0) {
-                        addRareaCount = 1;
-                        xSrc = event.getX();
-                        ySrc = event.getY();
-                    } else if (addRareaCount == 1) {
-                        addRareaCount = 0;
-                        xDes = event.getX();
-                        yDes = event.getY();
-                        double x1 = xSrc, y1 = ySrc, x2 = xDes, y2 = ySrc,
-                                x3 = xDes, y3 = yDes, x4 = xSrc, y4 = yDes;
-                        Polygon plg = new Polygon();
-                        plg.getPoints().addAll(new Double[]{
-                            x1, y1, x2, y2, x3, y3, x4, y4
-                        });
-                        plg.setFill(Color.RED);
-                        anchorPane.getChildren().add(plg);
-                        plgs.add(plg);
-
-                        xSrc = ySrc = xDes = yDes = 0;
-
-                        resetPolyLines(plgs);
-
-                        for (int i = 0; i < anchorPane.getChildren().size(); i++) {
-                            Node node = anchorPane.getChildren().get(i);
-                            if (node instanceof Polygon) {
-                                node.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        if (event.getButton().equals(MouseButton.SECONDARY)) {
-                                            final ContextMenu contextMenu = new ContextMenu();
-                                            MenuItem delete = new MenuItem("Delete");
-                                            contextMenu.getItems().addAll(delete);
-
-                                            delete.setOnAction(new EventHandler<ActionEvent>() {
-
-                                                @Override
-                                                public void handle(ActionEvent event) {
-                                                    anchorPane.getChildren().remove(node);
-                                                    plgs.remove(node);
-                                                    addRareaCount = -1;
-                                                }
-                                            });
-                                            contextMenu.show(anchorPane, event.getScreenX(), event.getScreenY());
-                                        }
-                                    }
-
-                                });
-                            }
+            anchorPane.setOnMouseClicked((MouseEvent event) -> {
+                if (addRareaCount == 0) {
+                    addRareaCount = 1;
+                    xSrc = event.getX();
+                    ySrc = event.getY();
+                } else if (addRareaCount == 1) {
+                    addRareaCount = 0;
+                    xDes = event.getX();
+                    yDes = event.getY();
+                    double x1 = xSrc, y1 = ySrc, x2 = xDes, y2 = ySrc,
+                            x3 = xDes, y3 = yDes, x4 = xSrc, y4 = yDes;
+                    Polygon plg = new Polygon();
+                    plg.getPoints().addAll(new Double[]{
+                        x1, y1, x2, y2, x3, y3, x4, y4
+                    });
+                    plg.setFill(Color.RED);
+                    anchorPane.getChildren().add(plg);
+                    plgs.add(plg);
+                    
+                    xSrc = ySrc = xDes = yDes = 0;
+                    
+                    resetPolyLines(plgs);
+                    
+                    for (int i = 0; i < anchorPane.getChildren().size(); i++) {
+                        Node node = anchorPane.getChildren().get(i);
+                        if (node instanceof Polygon) {
+                            node.setOnMouseClicked((MouseEvent event1) -> {
+                                if (event1.getButton().equals(MouseButton.SECONDARY)) {
+                                    final ContextMenu contextMenu = new ContextMenu();
+                                    MenuItem delete = new MenuItem("Delete");
+                                    contextMenu.getItems().addAll(delete);
+                                    delete.setOnAction((ActionEvent event2) -> {
+                                        anchorPane.getChildren().remove(node);
+                                        plgs.remove(node);
+                                        addRareaCount = -1;
+                                    });
+                                    contextMenu.show(anchorPane, event1.getScreenX(), event1.getScreenY());
+                                }
+                            });
                         }
-
                     }
+                    
                 }
-
             });
         }
     }

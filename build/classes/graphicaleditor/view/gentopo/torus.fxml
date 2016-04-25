@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" minHeight="182.0" prefHeight="300.0" prefWidth="305.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.TorusController">
+<AnchorPane id="AnchorPane" minHeight="182.0" prefHeight="300.0" prefWidth="305.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.gentopo.TorusController">
   <children>
     <GridPane layoutX="14.0" layoutY="14.0" prefHeight="286.0" prefWidth="291.0">
       <children>

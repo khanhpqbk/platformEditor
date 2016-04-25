@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +57,7 @@ public class XMLProcessor {
 
     }
 
-    public XMLProcessor(String fileName)  {
+    public XMLProcessor(String fileName) {
         try {
             inputFile = new File(fileName);
             System.out.println("filename: " + fileName);
@@ -234,7 +235,7 @@ public class XMLProcessor {
         e.setAttribute("coordinates", String.valueOf(newHost.getCoordinates()));
 
         if (reParse) {
-                parse();
+            parse();
 
         }
     }
@@ -275,7 +276,7 @@ public class XMLProcessor {
         if (rmv != null) {
             doc.getDocumentElement().removeChild(rmv);
         }
-        
+
         try {
             saveXml(inputFile);
         } catch (TransformerException ex) {
@@ -490,21 +491,38 @@ public class XMLProcessor {
         e.setAttribute("symmetry", "yes");
         asEle.appendChild(e);
 
-        for (LinkView link : rv.getLinks()) {
+        if (rv.getLinks().size() > 0) {
+            for (LinkView link : rv.getLinks()) {
+                Node newNode = d.createElement("link");
+                Element lnNew = (Element) newNode;
+                lnNew.setAttribute("id", link.getmId());
+                lnNew.setAttribute("bandwidth", String.valueOf(link.getBandwidth()));
+                lnNew.setAttribute("latency", String.valueOf(link.getLatency()));
+                lnNew.setAttribute("state", link.getState());
+                lnNew.setAttribute("sharing_policy", link.getSharingPolicy());
+                asEle.appendChild(lnNew);
+            }
+
+            for (LinkView link : rv.getLinks()) {
+                Node l = d.createElement("link_ctn");
+                Element ln = (Element) l;
+                ln.setAttribute("id", link.getmId());
+                e.appendChild(ln);
+            }
+        } else {
+            int id = new Random().nextInt(10000) + 100;
             Node newNode = d.createElement("link");
             Element lnNew = (Element) newNode;
-            lnNew.setAttribute("id", link.getmId());
-            lnNew.setAttribute("bandwidth", String.valueOf(link.getBandwidth()));
-            lnNew.setAttribute("latency", String.valueOf(link.getLatency()));
-            lnNew.setAttribute("state", link.getState());
-            lnNew.setAttribute("sharing_policy", link.getSharingPolicy());
+            lnNew.setAttribute("id", "link" + id);
+            lnNew.setAttribute("bandwidth", "" + 100);
+            lnNew.setAttribute("latency", String.valueOf(0));
+            lnNew.setAttribute("state", "ON");
+            lnNew.setAttribute("sharing_policy", "");
             asEle.appendChild(lnNew);
-        }
 
-        for (LinkView link : rv.getLinks()) {
             Node l = d.createElement("link_ctn");
             Element ln = (Element) l;
-            ln.setAttribute("id", link.getmId());
+            ln.setAttribute("id", "link" + id);
             e.appendChild(ln);
         }
 
@@ -1050,21 +1068,21 @@ public class XMLProcessor {
             }
         }
     }
-    
+
     //////////////////////////////////////////////////////////////
     // for Benchmarking
     public void genHimenoBM(int numprocs) {
         Element n = doc.createElement("numprocs");
         n.setAttribute("value", String.valueOf(numprocs));
         doc.getDocumentElement().appendChild(n);
-        
+
         try {
             saveXml(inputFile);
         } catch (TransformerException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void genGraph500BM(int numprocs, int scale, int edgeFactor, int engine) {
         Element num = doc.createElement("numprocs");
         num.setAttribute("value", String.valueOf(numprocs));
@@ -1078,14 +1096,14 @@ public class XMLProcessor {
         doc.getDocumentElement().appendChild(sc);
         doc.getDocumentElement().appendChild(edge);
         doc.getDocumentElement().appendChild(eng);
-        
+
         try {
             saveXml(inputFile);
         } catch (TransformerException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void genNASBM(String kernel, String klass, int numprocs) {
         Element ker = doc.createElement("kernel");
         ker.setAttribute("value", String.valueOf(kernel));
@@ -1097,7 +1115,7 @@ public class XMLProcessor {
         doc.getDocumentElement().appendChild(ker);
         doc.getDocumentElement().appendChild(kl);
         doc.getDocumentElement().appendChild(num);
-        
+
         try {
             saveXml(inputFile);
         } catch (TransformerException ex) {
