@@ -580,7 +580,7 @@ public class XMLProcessor {
             Node nNode = nList.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eleAS = (Element) nNode;
-                ASView as = new ASView(new Image(new File("src\\graphicaleditor\\res\\as.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), eleAS.getAttribute("id"));
+                ASView as = new ASView(new Image(new File("src/graphicaleditor/res/as.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), eleAS.getAttribute("id"));
                 String id = eleAS.getAttribute("id");
                 System.out.println("id = " + id);
                 NodeList hosts = eleAS.getElementsByTagName("host");
@@ -656,7 +656,7 @@ public class XMLProcessor {
 //                double hostAvailability = eleRouter.getAttribute("availability").isEmpty() ? 0.0 : Double.parseDouble(eleRouter.getAttribute("availability"));
 //                int hostCore = eleRouter.getAttribute("core").isEmpty() ? 0 : Integer.parseInt(eleRouter.getAttribute("core"));
 //                String hostState = eleRouter.getAttribute("state");
-                RouterView router = new RouterView(new Image(new File("src\\graphicaleditor\\res\\router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
+                RouterView router = new RouterView(new Image(new File("src/graphicaleditor/res/router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                         routerId);
 //                System.out.println(host.toString());
                 routerList.add(router);
@@ -764,7 +764,7 @@ public class XMLProcessor {
                 double hostAvailability = eleHost.getAttribute("availability").isEmpty() ? 0.0 : Double.parseDouble(eleHost.getAttribute("availability"));
                 int hostCore = eleHost.getAttribute("core").isEmpty() ? 0 : Integer.parseInt(eleHost.getAttribute("core"));
                 String hostState = eleHost.getAttribute("state");
-                HostView host = new HostView(new Image(new File("src\\graphicaleditor\\res\\host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
+                HostView host = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                         hostId, hostPower, hostState, hostPstate, hostAvailability, hostCore, hostCoord);
 //                System.out.println(host.toString());
                 hostList.add(host);
@@ -784,7 +784,7 @@ public class XMLProcessor {
         if (!forCluster) {
             doc.getDocumentElement().appendChild(as);
         }
-        RouterView rv = new RouterView(new Image(new File("src\\graphicaleditor\\res\\router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
+        RouterView rv = new RouterView(new Image(new File("src/graphicaleditor/res/router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                 "main_router");
         Node router = (Node) buildNodeFromRouterView(doc,
                 rv);
@@ -794,7 +794,7 @@ public class XMLProcessor {
             as.appendChild(router);
         }
         for (int i = 0; i < numOfHost; i++) {
-            HostView hostview = new HostView(new Image(new File("src\\graphicaleditor\\res\\host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), prefix + i + suffix,
+            HostView hostview = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), prefix + i + suffix,
                     power,
                     "ON",
                     0,
@@ -842,7 +842,7 @@ public class XMLProcessor {
 
         for (int i = 0; i < numOfHost; i++) {
             Node host = buildNodeFromHostView(doc,
-                    new HostView(new Image(new File("src\\graphicaleditor\\res\\host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
+                    new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                             "host" + i,
                             100,
                             "ON",
@@ -960,7 +960,7 @@ public class XMLProcessor {
             for (int j = 0; j < y; j++) {
                 for (int k = 0; k < z; k++) {
                     Node host = buildNodeFromHostView(doc,
-                            new HostView(new Image(new File("src\\graphicaleditor\\res\\host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
+                            new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                                     "host" + i + "" + j + "" + k,
                                     100,
                                     "ON",

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<benchmark type="NAS" version="3">
+    <kernel value="cg"/>
+    <class value="A"/>
+    <numprocs value="8"/>
+    <AS id="AS12"/>
+</benchmark>
