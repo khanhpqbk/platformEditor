@@ -700,7 +700,7 @@ public class GraphicalModeController implements Initializable {
                 System.out.println("case drop asview");
                 if (isOutside) {
                     asId++;
-                    Image img = new Image(new File("src\\graphicaleditor\\res\\as.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
+                    Image img = new Image(new File("src/graphicaleditor/res/as.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
                     ASView newAS = new ASView(img, "AS" + String.valueOf(asId));
                     addASView(newAS, event.getX(), event.getY());
 
@@ -715,7 +715,7 @@ public class GraphicalModeController implements Initializable {
                 System.out.println("case drop hostview");
                 if (!isOutside) {
                     id++;
-                    Image img = new Image(new File("src\\graphicaleditor\\res\\host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
+                    Image img = new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
                     HostView h = new HostView(img, "host" + id, 0, "ON");
                     addHostViewOrRouterView(h, event.getX(), event.getY());
                     asNow.getHostList().add(h);
@@ -732,7 +732,7 @@ public class GraphicalModeController implements Initializable {
                 System.out.println("case drop routerview");
                 if (!isOutside) {
                     id++;
-                    Image img = new Image(new File("src\\graphicaleditor\\res\\router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
+                    Image img = new Image(new File("src/graphicaleditor/res/router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
                     RouterView r = new RouterView(img, "router" + id);
                     addHostViewOrRouterView(r, event.getX(), event.getY());
                     asNow.getRouterList().add(r);
