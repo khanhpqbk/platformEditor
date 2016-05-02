@@ -10,9 +10,7 @@ import graphicaleditor.controller.gentopo.TorusController;
 import graphicaleditor.controller.gentopo.MeshController;
 import graphicaleditor.controller.gentopo.RingController;
 import graphicaleditor.controller.gentopo.StarController;
-import graphicaleditor.controller.benchmark.Graph500Controller;
-import graphicaleditor.controller.benchmark.HimenoController;
-import graphicaleditor.controller.benchmark.NASController;
+import graphicaleditor.controller.benchmark.BMController;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.controller.interfaces.IHandler;
 import graphicaleditor.model.ASView;
@@ -176,8 +174,8 @@ public class FXMLDocumentController implements Initializable {
                 HostDetailController c = (HostDetailController) controller;
                 c.setHostView(h);
                 c.init(h);
-            } else if (controller instanceof NASController) {
-                NASController c = (NASController) controller;
+            } else if (controller instanceof BMController) {
+                BMController c = (BMController) controller;
                 c.init();
             }
             controller.setParentController(this);
@@ -189,7 +187,7 @@ public class FXMLDocumentController implements Initializable {
                         public void handle(MouseEvent event) {
                             FileChooser chooser = new FileChooser();
                             selectedFile = chooser.showSaveDialog(null);
-                            
+
                             if (isGen) {
                                 generatePlatformElement();
                             }
@@ -298,13 +296,13 @@ public class FXMLDocumentController implements Initializable {
         }, d, null);
     }
 
-    private void generateBMElement(String type) {
+    private void generateBMElement() {
         try {
             FileWriter fileWriter = null;
 
             fileWriter = new FileWriter(selectedFile);
             fileWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<benchmark version=\"3\" type=\"" + type + "\" >" + "</benchmark>");
+                    + "<benchmarks version=\"3\" >" + "</benchmarks>");
             fileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -312,51 +310,28 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void himenoBM() {
+    private void bm() {
         final Stage d = new Stage();
-        showDialog(false, "himeno", 400, 200, "benchmark/himeno", new IHandler() {
+        showDialog(false, "bm", 500, 800, "benchmark/bm", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
-                HimenoController c = (HimenoController) controller;
-                generateBMElement("himeno");
+                BMController c = (BMController) controller;
+                generateBMElement();
                 XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
-                p.genHimenoBM(Integer.parseInt(c.getNumOfProcs().getText()));
-            }
-        }, d, null);
-    }
-
-    @FXML
-    private void graph500BM() {
-        final Stage d = new Stage();
-        showDialog(false, "graph500", 400, 400, "benchmark/graph500", new IHandler() {
-
-            @Override
-            public void handle(AbstractDialogController controller) {
-                Graph500Controller c = (Graph500Controller) controller;
-                generateBMElement("graph500");
-                XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
-                p.genGraph500BM(Integer.parseInt(c.getNumprocs().getText()), 
-                        Integer.parseInt(c.getScale().getText()), 
-                        Integer.parseInt(c.getEdgeFactor().getText()),
-                        Integer.parseInt(c.getEngine().getText()));
-            }
-        }, d, null);
-    }
-
-    @FXML
-    private void NASBM() {
-        final Stage d = new Stage();
-        showDialog(false, "NAS", 400, 400, "benchmark/nas", new IHandler() {
-
-            @Override
-            public void handle(AbstractDialogController controller) {
-                NASController c = (NASController) controller;
-                generateBMElement("NAS");
-                XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
-                p.genNASBM(c.getKernelCombobox().getValue(), 
-                        c.getClassCombobox().getValue(), 
-                        (c.getNumprocsCombobox().getValue()));
+                boolean useHimeno = c.getUseHimeno().isSelected();
+                boolean useGraph500 = c.getUseGraph500().isSelected();
+                boolean useNAS = c.getUseNAS().isSelected();
+                int HimenoNumprocs = c.getHimenoNumprocs().getText().isEmpty()? 0 : Integer.parseInt(c.getHimenoNumprocs().getText());
+                int graph500Numprocs = c.getGraph500Numprocs().getText().isEmpty()? 0 : Integer.parseInt(c.getGraph500Numprocs().getText()); ;
+                int scale = c.getScale().getText().isEmpty()? 0 : Integer.parseInt(c.getScale().getText());;
+                int edgeFactor = c.getEdgeFactor().getText().isEmpty()? 0 : Integer.parseInt(c.getEdgeFactor().getText());;
+                int engine = c.getEngine().getText().isEmpty()? 0 : Integer.parseInt(c.getEngine().getText());;
+                String kernel = c.getKernel().getValue();
+                String klass = c.getKlass().getValue();
+                int NASNumprocs = c.getNASNumprocs().getValue();
+                
+                p.genBM(useHimeno, useGraph500, useNAS, HimenoNumprocs, graph500Numprocs, scale, edgeFactor, engine, kernel, klass, NASNumprocs);
             }
         }, d, null);
     }
