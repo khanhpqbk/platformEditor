@@ -601,6 +601,8 @@ public class GraphicalModeController implements Initializable {
 //                            c.getListView();
                             forceListRefreshOn(c.getListView());
                         }
+                        
+                        
                     }
                 });
             }
@@ -667,8 +669,8 @@ public class GraphicalModeController implements Initializable {
         deleteHostCM = contextMenu;
 //                            MenuItem gointo = new MenuItem("Go into");
         MenuItem delete = new MenuItem("Delete");
-        MenuItem markForBM = new MenuItem("Mark for benchmarking");
-        contextMenu.getItems().addAll(delete, markForBM);
+        MenuItem markForBM = null;
+        contextMenu.getItems().add(delete);
 //        contextMenu.
 
         if (view instanceof RouterView) {
@@ -684,28 +686,26 @@ public class GraphicalModeController implements Initializable {
             });
 
         } else if (view instanceof HostView) {
-            HostView host = (HostView) view;
-
+            HostView h = (HostView) view;
+            String text = h.isSelected() ? "Unmark": "Mark for benchmarking"; 
+            markForBM = new MenuItem(text);
+            contextMenu.getItems().add(markForBM);
+            markForBM.setOnAction((ActionEvent event) -> {
+                h.setSelected(!h.isSelected());
+            });
             delete.setOnAction((ActionEvent event) -> {
                 System.out.println("delete Host...");
                 anchorPane.getChildren().remove(view);
                 asNow.getHostList().remove(view);
                 rmvRoute(view);
-                parentController.getTextModeController().removeHostXml(asNow, host);
+                parentController.getTextModeController().removeHostXml(asNow, h);
                 parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
             });
-
-            markForBM.setOnAction((ActionEvent event) -> {
-                System.out.println("bm...");
-                if (host.isSelected()) {
-                    markForBM.setText("Unmark");
-                } else {
-                    markForBM.setText("Mark for benchmarking");
-                }
-                host.setSelected(!host.isSelected());
-            });
+ 
 
         }
+        
+        
 
         contextMenu.show(anchorPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
     }

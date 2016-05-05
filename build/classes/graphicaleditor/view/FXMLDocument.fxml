@@ -50,8 +50,9 @@
           </items>
         </Menu>
         <Menu text="Benchmarking">
-            <MenuItem text="Add benchmarks" onAction="#bm"  />
-            <MenuItem text="Add configuration paramaters" onAction="#config"  />
+            <MenuItem text="Add benchmarks" onAction="#genBM"  />
+            <MenuItem text="Add hostfile" onAction="#genHostfile"  />
+            <MenuItem text="Add configuration paramaters" onAction="#genConfig"  />
         </Menu>
         <Menu text="Help">
           <items>
