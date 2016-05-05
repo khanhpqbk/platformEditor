@@ -6,6 +6,10 @@
 
 package graphicaleditor.model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -23,6 +27,8 @@ public class HostView extends ImageView {
     private int core;
     private int coordinates;
     
+    private BooleanProperty selected = new SimpleBooleanProperty();
+    
 
     public HostView(Image image, String id, int power, String state) {
         super(image);
@@ -30,6 +36,18 @@ public class HostView extends ImageView {
         this.id = id;
         this.power = power;
         this.state = state;
+        
+        setOnChanged();
+    }
+    
+    private void setOnChanged() {
+        selected.addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                
+            }
+        });
     }
 
     public HostView(Image image, String id, int power, String state, double pstate, double availability, int core, int coordinates) {
@@ -42,6 +60,7 @@ public class HostView extends ImageView {
         this.availability = availability;
         this.core = core;
         this.coordinates = coordinates;
+        setOnChanged();
     }
     
     
@@ -121,7 +140,17 @@ public class HostView extends ImageView {
     public String toString() {
         return "HostView{" + "image=" + image + ", id=" + id + ", power=" + power + ", state=" + state + ", pstate=" + pstate + ", availability=" + availability + ", core=" + core + ", coordinates=" + coordinates + '}';
     }
+
+    public boolean isSelected() {
+        return selected.get();
+    }
+
+    public void setSelected(boolean checked) {
+        this.selected.set(checked);
+    }
     
-    
+    public BooleanProperty booleanProperty() {
+        return selected;
+    }
     
 }

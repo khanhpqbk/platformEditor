@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" minHeight="182.0" prefHeight="332.0" prefWidth="305.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.benchmark.HostFileController">
+  <children>
+    <Pane layoutX="7.0" layoutY="14.0" prefHeight="272.0" prefWidth="284.0">
+      <children>
+        <Button fx:id="btn" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" text="Choose file" />
+        <Label fx:id="lbl" layoutX="139.0" layoutY="24.0" prefWidth="131.0" text="No file chosen" />
+        <ListView fx:id="listView" layoutX="14.0" layoutY="90.0" prefHeight="168.0" prefWidth="256.0" />
+        <Button fx:id="savedFileBtn" id="savedFileBtn" layoutX="14.0" layoutY="58.0" mnemonicParsing="false" prefWidth="114.0" text="Choose saved file" />
+        <Label id="savedLbl" fx:id="savedLbl" layoutX="139.0" layoutY="61.0" prefWidth="131.0" text="No file chosen" />
+      </children>
+    </Pane>
+    <Button fx:id="okBtn" layoutX="21.0" layoutY="286.0" mnemonicParsing="false" text="Ok" />
+    <Button fx:id="cancelBtn" layoutX="163.0" layoutY="287.0" mnemonicParsing="false" text="Cancel" />
+  </children>
+</AnchorPane>

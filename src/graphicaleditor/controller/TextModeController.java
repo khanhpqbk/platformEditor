@@ -5,8 +5,8 @@
  */
 package graphicaleditor.controller;
 
-import graphicaleditor.controller.xml.TextFileReader;
-import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.fileprocessors.TextFileProcessor;
+import graphicaleditor.controller.fileprocessors.XMLProcessor;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.HostView;
 import graphicaleditor.model.RouteView;
@@ -134,7 +134,7 @@ public class TextModeController implements Initializable {
 
         Future<List<String>> future;
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        TextFileReader reader = new TextFileReader();
+        TextFileProcessor reader = new TextFileProcessor();
 
         future = executorService.submit(new Callable<List<String>>() {
             public List<String> call() throws Exception {

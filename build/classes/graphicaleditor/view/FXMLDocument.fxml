@@ -51,6 +51,7 @@
         </Menu>
         <Menu text="Benchmarking">
             <MenuItem text="Add benchmarks" onAction="#bm"  />
+            <MenuItem text="Add configuration paramaters" onAction="#config"  />
         </Menu>
         <Menu text="Help">
           <items>

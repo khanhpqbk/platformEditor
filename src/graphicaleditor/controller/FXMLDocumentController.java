@@ -5,12 +5,14 @@
  */
 package graphicaleditor.controller;
 
-import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.fileprocessors.XMLProcessor;
 import graphicaleditor.controller.gentopo.TorusController;
 import graphicaleditor.controller.gentopo.MeshController;
 import graphicaleditor.controller.gentopo.RingController;
 import graphicaleditor.controller.gentopo.StarController;
 import graphicaleditor.controller.benchmark.BMController;
+import graphicaleditor.controller.benchmark.HostFileController;
+import graphicaleditor.controller.fileprocessors.TextFileProcessor;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.controller.interfaces.IHandler;
 import graphicaleditor.model.ASView;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
@@ -67,13 +70,22 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private GraphicalModeController graphicalModeController;
+    
+    private HostFileController hostFileController;
 
     private File selectedFile;
 
     @FXML
     private MenuItem turnOnOff;
-
-    /**
+    
+    public void setHostFileController(HostFileController c) {
+        hostFileController = c;
+    }
+    
+    public HostFileController getHostFileController() {
+        return hostFileController;
+    }
+     /**
      * Handle action related to "About" menu item.
      *
      * @param event Event on "About" menu item.
@@ -170,12 +182,17 @@ public class FXMLDocumentController implements Initializable {
 
             AbstractDialogController controller
                     = loader.<AbstractDialogController>getController();
+            
+            
             if (controller instanceof HostDetailController) {
                 HostDetailController c = (HostDetailController) controller;
                 c.setHostView(h);
                 c.init(h);
             } else if (controller instanceof BMController) {
                 BMController c = (BMController) controller;
+                c.init();
+            } else if (controller instanceof HostFileController) {
+                HostFileController c = (HostFileController) controller;
                 c.init();
             }
             controller.setParentController(this);
@@ -185,13 +202,17 @@ public class FXMLDocumentController implements Initializable {
 
                         @Override
                         public void handle(MouseEvent event) {
-                            FileChooser chooser = new FileChooser();
-                            selectedFile = chooser.showSaveDialog(null);
+                            if(!(controller instanceof HostFileController)) {
+                                FileChooser chooser = new FileChooser();
+                                selectedFile = chooser.showSaveDialog(null);
+                            }
 
                             if (isGen) {
                                 generatePlatformElement();
                             }
-                            okHandler.handle(controller);
+                            if (okHandler != null) {
+                                okHandler.handle(controller);
+                            }
                             d.close();
                             if (isGen) {
                                 textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
@@ -310,7 +331,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void bm() {
+    private void genBM() {
         final Stage d = new Stage();
         showDialog(false, "bm", 500, 800, "benchmark/bm", new IHandler() {
 
@@ -334,6 +355,41 @@ public class FXMLDocumentController implements Initializable {
                 p.genBM(useHimeno, useGraph500, useNAS, HimenoNumprocs, graph500Numprocs, scale, edgeFactor, engine, kernel, klass, NASNumprocs);
             }
         }, d, null);
+    }
+    
+    
+    @FXML
+    private void genHostfile() {
+        final Stage d = new Stage();
+        showDialog(false, "bm", 400, 400, "benchmark/hostfile", new IHandler() {
+
+            @Override
+            public void handle(AbstractDialogController controller) {
+                File savedFile = getHostFileController().getSavedFile();
+                File selectedF = getHostFileController().getSelectedFile();
+                XMLProcessor p = getHostFileController().getXMLProcessor();
+                if (savedFile != null && selectedF != null && p != null) {
+                    
+                    List<String> list = new ArrayList<>();
+                    for(HostView h: p.getAsList().get(0).getHostList()) {
+                        if(h.isSelected()) 
+                            list.add(h.getmId());
+                    }
+                    if(list.size() > 0) {
+                        new TextFileProcessor().write(savedFile, list);
+                        System.out.println("writing...");
+                    } else {
+                        System.out.println("no hostfile chosen");
+                    }
+                    
+                }
+            }
+        }, d, null);
+    }
+    
+    @FXML
+    private void genConfig() {
+        
     }
 
     @FXML
@@ -437,5 +493,9 @@ public class FXMLDocumentController implements Initializable {
 
     public File getSelectedFile() {
         return selectedFile;
+    }
+    
+    public void setSeletedFile(File f) {
+        selectedFile = f;
     }
 }

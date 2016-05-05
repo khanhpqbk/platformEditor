@@ -5,7 +5,7 @@
  */
 package graphicaleditor.controller;
 
-import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.fileprocessors.XMLProcessor;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.model.HostView;
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class HostDetailController extends AbstractDialogController {
             //            System.out.println("textfield changed from " + oldValue + " to " + newValue);
             XMLProcessor p = new XMLProcessor(parentController.getParentController().getSelectedFile().getAbsolutePath());
             p.parse();
-            if (p.getHostRouterIdList().contains(newValue)) {
+            if (p.getHostRouterIdList(true).contains(newValue)) {
                 warningLbl.setText("Duplicate host id!");
                 warningLbl.setTextFill(Color.RED);
                 okBtn.setDisable(true);

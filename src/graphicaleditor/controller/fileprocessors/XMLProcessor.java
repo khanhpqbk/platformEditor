@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package graphicaleditor.controller.xml;
+package graphicaleditor.controller.fileprocessors;
 
 import graphicaleditor.controller.GraphicalModeController;
 import graphicaleditor.model.ASView;
@@ -1077,23 +1077,23 @@ public class XMLProcessor {
         Element n = doc.createElement("numprocs");
         n.setAttribute("value", String.valueOf(numprocs));
         hmn.appendChild(n);
-        
+
         doc.getDocumentElement().appendChild(hmn);
 
     }
-    
-    public void genBM(boolean useHimeno, boolean useGraph500, boolean useNAS, int HimenoNumprocs, 
+
+    public void genBM(boolean useHimeno, boolean useGraph500, boolean useNAS, int HimenoNumprocs,
             int graph500Numprocs, int scale, int edgeFactor, int engine,
             String kernel, String klass, int NASNumprocs) {
-        if(useHimeno) {
+        if (useHimeno) {
             genHimenoBM(HimenoNumprocs);
         }
-        
-        if(useGraph500) {
+
+        if (useGraph500) {
             genGraph500BM(graph500Numprocs, scale, edgeFactor, engine);
         }
-        
-        if(useNAS) {
+
+        if (useNAS) {
             genNASBM(kernel, klass, NASNumprocs);
         }
 
@@ -1108,7 +1108,7 @@ public class XMLProcessor {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "graph500");
         doc.getDocumentElement().appendChild(hmn);
-        
+
         Element num = doc.createElement("numprocs");
         num.setAttribute("value", String.valueOf(numprocs));
         Element sc = doc.createElement("scale");
@@ -1128,7 +1128,7 @@ public class XMLProcessor {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "NAS");
         doc.getDocumentElement().appendChild(hmn);
-        
+
         Element ker = doc.createElement("kernel");
         ker.setAttribute("value", String.valueOf(kernel));
         Element kl = doc.createElement("class");
@@ -1158,7 +1158,7 @@ public class XMLProcessor {
      * only call after parse()
      *
      */
-    public List<String> getHostRouterIdList() {
+    public List<String> getHostRouterIdList(boolean includeRouter) {
         List<String> listHostRouterId = new ArrayList<>();
         for (ASView as : asList) {
             if (as.getHostList().size() > 0) {
@@ -1168,10 +1168,12 @@ public class XMLProcessor {
                 }
             }
 
-            if (as.getRouteList().size() > 0) {
-                List<RouterView> list = as.getRouterList();
-                for (RouterView r : list) {
-                    listHostRouterId.add(r.getmId());
+            if (includeRouter) {
+                if (as.getRouteList().size() > 0) {
+                    List<RouterView> list = as.getRouterList();
+                    for (RouterView r : list) {
+                        listHostRouterId.add(r.getmId());
+                    }
                 }
             }
         }

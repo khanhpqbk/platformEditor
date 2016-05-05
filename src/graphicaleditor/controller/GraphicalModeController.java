@@ -1,8 +1,9 @@
 package graphicaleditor.controller;
 
-import graphicaleditor.controller.xml.XMLProcessor;
+import graphicaleditor.controller.benchmark.HostFileController;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.controller.interfaces.IHandler;
+import graphicaleditor.controller.fileprocessors.XMLProcessor;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.Host;
 import graphicaleditor.model.HostView;
@@ -22,6 +23,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,7 +35,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -90,6 +96,7 @@ public class GraphicalModeController implements Initializable {
     private double xSrc, ySrc, xDes, yDes;
 
     private FXMLDocumentController parentController;
+    private ContextMenu deleteHostCM = null;
 
     public void setParentController(FXMLDocumentController c) {
         this.parentController = c;
@@ -100,6 +107,7 @@ public class GraphicalModeController implements Initializable {
     }
 
     public void renderOutsideView(XMLProcessor parser) {
+        clearView();
         for (ASView as : parser.getAsList()) {
             this.addASView(as, r.nextInt(VIEW_RANGE), r.nextInt(VIEW_RANGE));
         }
@@ -420,7 +428,7 @@ public class GraphicalModeController implements Initializable {
                             RouterView routerView = (RouterView) view;
                             showRouterDetails(routerView);
                         }
-                        
+
                     }
                 } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                     System.out.println("chuot phai");
@@ -437,14 +445,14 @@ public class GraphicalModeController implements Initializable {
                             isOutside = false;
                             renderInsideView(as);
                         });
-                        
+
                         delete.setOnAction((ActionEvent event) -> {
                             System.out.println("delete AS...");
                             anchorPane.getChildren().remove(view);
                             parentController.getTextModeController().removeASXml((ASView) view);
                             parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
                         });
-                        
+
                         contextMenu.show(anchorPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     }
                 }
@@ -455,9 +463,9 @@ public class GraphicalModeController implements Initializable {
         anchorPane.setOnDragOver((DragEvent event) -> {
             event.acceptTransferModes(TransferMode.ANY);
 //                }
-            
+
             event.consume();
-            
+
             System.out.println("drag over. as view");
         });
 
@@ -469,15 +477,15 @@ public class GraphicalModeController implements Initializable {
                 System.out.println("drag dropped. as view ");
                 view.setLayoutX(event.getX());
                 view.setLayoutY(event.getY());
-                
+
                 success = true;
             } else if (db.getString().equalsIgnoreCase("frompallete")) {
                 workPallete(event, isOutside);
             }
             /* let the source know whether the string was successfully
-            * transferred and used */
+             * transferred and used */
             event.setDropCompleted(success);
-            
+
             event.consume();
         });
 
@@ -499,12 +507,12 @@ public class GraphicalModeController implements Initializable {
                 final ImageView view = (ImageView) anchorPane.getChildren().get(i);
                 view.setOnDragDetected((MouseEvent event) -> {
                     Dragboard db = view.startDragAndDrop(TransferMode.ANY);
-                    
+
                     /* Put a string on a dragboard */
                     ClipboardContent content = new ClipboardContent();
                     content.putString("frommovinghostorrouter");
                     db.setContent(content);
-                    
+
                     event.consume();
                 });
 
@@ -530,12 +538,12 @@ public class GraphicalModeController implements Initializable {
                             }
                         } else if (mouseEvent.getClickCount() == 1) {
                             prepareAddRoute(view);
-                            
+
                         }
                     } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                         System.out.println("chuot phai on host");
                         deleteRouterHostView(view, mouseEvent);
-                        
+
                         mouseEvent.consume();
                     }
                 });
@@ -544,9 +552,9 @@ public class GraphicalModeController implements Initializable {
             anchorPane.setOnDragOver((DragEvent event) -> {
                 event.acceptTransferModes(TransferMode.ANY);
 //                }
-                
+
                 event.consume();
-                
+
                 System.out.println("drag over. host view");
             });
 
@@ -575,15 +583,36 @@ public class GraphicalModeController implements Initializable {
                     }
                 } else if (db.getString().equalsIgnoreCase("frompallete")) {
                     workPallete(event, isOutside);
-                    
+
                 }
                 success = true;
                 event.setDropCompleted(success);
                 event.consume();
             });
 
+            if (h instanceof HostView) {
+                HostView host = (HostView) h;
+                host.booleanProperty().addListener(new ChangeListener<Boolean>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        HostFileController c = parentController.getHostFileController();
+                        if (c != null && c.getListView() != null) {
+//                            c.getListView();
+                            forceListRefreshOn(c.getListView());
+                        }
+                    }
+                });
+            }
+
         }
 
+    }
+
+    private <T> void forceListRefreshOn(ListView<T> lsv) {
+        ObservableList<T> items = lsv.<T>getItems();
+        lsv.<T>setItems(null);
+        lsv.<T>setItems(items);
     }
 
     private void prepareAddRoute(ImageView view) {
@@ -635,9 +664,12 @@ public class GraphicalModeController implements Initializable {
 
     private void deleteRouterHostView(ImageView view, MouseEvent mouseEvent) {
         final ContextMenu contextMenu = new ContextMenu();
+        deleteHostCM = contextMenu;
 //                            MenuItem gointo = new MenuItem("Go into");
         MenuItem delete = new MenuItem("Delete");
-        contextMenu.getItems().addAll(delete);
+        MenuItem markForBM = new MenuItem("Mark for benchmarking");
+        contextMenu.getItems().addAll(delete, markForBM);
+//        contextMenu.
 
         if (view instanceof RouterView) {
             RouterView router = (RouterView) view;
@@ -661,6 +693,16 @@ public class GraphicalModeController implements Initializable {
                 rmvRoute(view);
                 parentController.getTextModeController().removeHostXml(asNow, host);
                 parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+            });
+
+            markForBM.setOnAction((ActionEvent event) -> {
+                System.out.println("bm...");
+                if (host.isSelected()) {
+                    markForBM.setText("Unmark");
+                } else {
+                    markForBM.setText("Mark for benchmarking");
+                }
+                host.setSelected(!host.isSelected());
             });
 
         }
@@ -762,14 +804,14 @@ public class GraphicalModeController implements Initializable {
             Node node = gridPane.getChildren().get(i);
             node.setOnDragDetected((MouseEvent event) -> {
                 Dragboard db = node.startDragAndDrop(TransferMode.ANY);
-                
+
                 /* Put a string on a dragboard */
                 ClipboardContent content = new ClipboardContent();
                 content.putString("frompallete");
                 db.setContent(content);
-                
+
                 event.consume();
-                
+
                 System.out.println("start drag on node ");
             });
 
@@ -792,9 +834,9 @@ public class GraphicalModeController implements Initializable {
         anchorPane.setOnDragOver((DragEvent event) -> {
             event.acceptTransferModes(TransferMode.ANY);
 //                }
-            
+
             event.consume();
-            
+
             System.out.println("drag over. from pallete");
         });
 
@@ -804,13 +846,13 @@ public class GraphicalModeController implements Initializable {
             if (db.getString().equals("frompallete")) {
                 System.out.println("drag dropped frompallete");
                 workPallete(event, isOutside);
-                
+
                 success = true;
             }
             /* let the source know whether the string was successfully
-            * transferred and used */
+             * transferred and used */
             event.setDropCompleted(success);
-            
+
             event.consume();
         });
 
@@ -839,15 +881,15 @@ public class GraphicalModeController implements Initializable {
         final Stage dialog = new Stage();
         IHandler handler = (AbstractDialogController controller) -> {
             HostDetailController c = (HostDetailController) controller;
-            
+
             HostView newHost = c.createHostFromFields();
-            
+
             parentController.getTextModeController().modifyHostXml(newHost, h.getmId());
             saveRouteFromFields(asNow, newHost, h);
             saveHostFromFields(h, newHost);
             parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
         };
-        
+
         parentController.showDialog(false, "host details", 500, 400, "hostdetail", handler, dialog, h);
 
 //        System.out.println("show host details");
@@ -954,11 +996,11 @@ public class GraphicalModeController implements Initializable {
                     plg.setFill(Color.RED);
                     anchorPane.getChildren().add(plg);
                     plgs.add(plg);
-                    
+
                     xSrc = ySrc = xDes = yDes = 0;
-                    
+
                     resetPolyLines(plgs);
-                    
+
                     for (int i = 0; i < anchorPane.getChildren().size(); i++) {
                         Node node = anchorPane.getChildren().get(i);
                         if (node instanceof Polygon) {
@@ -977,7 +1019,7 @@ public class GraphicalModeController implements Initializable {
                             });
                         }
                     }
-                    
+
                 }
             });
         }
