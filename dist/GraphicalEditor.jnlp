@@ -8,7 +8,9 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="GraphicalEditor.jar" size="509724" download="eager" />
+    <jar href="GraphicalEditor.jar" size="630193" download="eager" />
+    <jar href="lib\libthrift-0.9.3.jar" size="254229" download="eager" />
+    <jar href="lib\slf4j-api-1.6.0.jar" size="29368" download="eager" />
   </resources>
 <security>
   <all-permissions/>

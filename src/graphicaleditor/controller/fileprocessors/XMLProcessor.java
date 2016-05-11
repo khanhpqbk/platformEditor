@@ -1074,9 +1074,10 @@ public class XMLProcessor {
     private void genHimenoBM(int numprocs) {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "himeno");
-        Element n = doc.createElement("numprocs");
-        n.setAttribute("value", String.valueOf(numprocs));
-        hmn.appendChild(n);
+        hmn.setAttribute("numprocs", String.valueOf(numprocs));
+//        Element n = doc.createElement("numprocs");
+//        n.setAttribute("value", String.valueOf(numprocs));
+//        hmn.appendChild(n);
 
         doc.getDocumentElement().appendChild(hmn);
 
@@ -1107,38 +1108,45 @@ public class XMLProcessor {
     private void genGraph500BM(int numprocs, int scale, int edgeFactor, int engine) {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "graph500");
+        hmn.setAttribute("numprocs", String.valueOf(numprocs));
+        hmn.setAttribute("scale", String.valueOf(scale));
+        hmn.setAttribute("engine", String.valueOf(engine));
+        
         doc.getDocumentElement().appendChild(hmn);
 
-        Element num = doc.createElement("numprocs");
-        num.setAttribute("value", String.valueOf(numprocs));
-        Element sc = doc.createElement("scale");
-        sc.setAttribute("value", String.valueOf(scale));
-        Element edge = doc.createElement("edgefactor");
-        edge.setAttribute("value", String.valueOf(edgeFactor));
-        Element eng = doc.createElement("engine");
-        eng.setAttribute("value", String.valueOf(engine));
-        hmn.appendChild(num);
-        hmn.appendChild(sc);
-        hmn.appendChild(edge);
-        hmn.appendChild(eng);
+//        Element num = doc.createElement("numprocs");
+//        num.setAttribute("value", String.valueOf(numprocs));
+//        Element sc = doc.createElement("scale");
+//        sc.setAttribute("value", String.valueOf(scale));
+//        Element edge = doc.createElement("edgefactor");
+//        edge.setAttribute("value", String.valueOf(edgeFactor));
+//        Element eng = doc.createElement("engine");
+//        eng.setAttribute("value", String.valueOf(engine));
+//        hmn.appendChild(num);
+//        hmn.appendChild(sc);
+//        hmn.appendChild(edge);
+//        hmn.appendChild(eng);
 
     }
 
     private void genNASBM(String kernel, String klass, int numprocs) {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "NAS");
+        hmn.setAttribute("kernel", String.valueOf(kernel));
+        hmn.setAttribute("class", klass);
+        hmn.setAttribute("numprocs", String.valueOf(numprocs));
         doc.getDocumentElement().appendChild(hmn);
 
-        Element ker = doc.createElement("kernel");
-        ker.setAttribute("value", String.valueOf(kernel));
-        Element kl = doc.createElement("class");
-        kl.setAttribute("value", String.valueOf(klass));
-        Element num = doc.createElement("numprocs");
-        num.setAttribute("value", String.valueOf(numprocs));
-
-        hmn.appendChild(ker);
-        hmn.appendChild(kl);
-        hmn.appendChild(num);
+//        Element ker = doc.createElement("kernel");
+//        ker.setAttribute("value", String.valueOf(kernel));
+//        Element kl = doc.createElement("class");
+//        kl.setAttribute("value", String.valueOf(klass));
+//        Element num = doc.createElement("numprocs");
+//        num.setAttribute("value", String.valueOf(numprocs));
+//
+//        hmn.appendChild(ker);
+//        ker.appendChild(kl);
+//        ker.appendChild(num);
 
     }
 
