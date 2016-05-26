@@ -16,22 +16,17 @@
         <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="2" />
         <AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.valignment="TOP" />
         <Label alignment="TOP_LEFT" prefWidth="209.9998779296875" text="Choose benchmarks to use" textAlignment="RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <CheckBox fx:id="useGraph500" mnemonicParsing="false" text="Use graph500" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <Label prefWidth="210.0" text="Scale" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-        <Label prefWidth="210.0" text="Edge factor" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-        <Label prefWidth="210.0" text="Engine" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-        <TextField fx:id="graph500Numprocs" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-        <TextField fx:id="scale" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <TextField fx:id="edgeFactor" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-        <TextField fx:id="engine" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-        <CheckBox fx:id="useNAS" mnemonicParsing="false" text="Use NAS" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-        <Button fx:id="okBtn" mnemonicParsing="false" text="Ok" GridPane.columnIndex="0" GridPane.rowIndex="12" />
-        <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-        <Label prefWidth="210.0" text="Kernel" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-        <Label prefWidth="210.0" text="Class" GridPane.columnIndex="0" GridPane.rowIndex="10" />
-        <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="11" />
-        <ComboBox fx:id="kernel" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+        <CheckBox fx:id="useGraph500" mnemonicParsing="false" text="Use graph500" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <Label prefWidth="210.0" text="Scale" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <TextField fx:id="graph500Numprocs" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <CheckBox fx:id="useNAS" mnemonicParsing="false" text="Use NAS" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+        <Button fx:id="okBtn" mnemonicParsing="false" text="Ok" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+        <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+        <Label prefWidth="210.0" text="Kernel" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+        <Label prefWidth="210.0" text="Class" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+        <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+        <ComboBox fx:id="kernel" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
           <items>
             <FXCollections fx:factory="observableArrayList">
               <String fx:value="bt" />
@@ -41,7 +36,7 @@
             </FXCollections>
           </items>
         </ComboBox>
-        <ComboBox fx:id="klass" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+        <ComboBox fx:id="klass" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
           <items>
             <FXCollections fx:factory="observableArrayList">
               <String fx:value="S" />
@@ -51,12 +46,46 @@
             </FXCollections>
           </items>
         </ComboBox>
-        <ComboBox fx:id="NASNumprocs" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+        <ComboBox fx:id="NASNumprocs" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
           <items>
             <FXCollections fx:factory="observableArrayList">
               <String fx:value="1" />
               <String fx:value="2" />
               <String fx:value="4" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <Label prefWidth="79.0" text="Class" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <ComboBox id="kernel" fx:id="himenoClass" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <String fx:value="SSMALL" />
+              <String fx:value="SMALL" />
+              <String fx:value="MID" />
+              <String fx:value="BIG" />
+            </FXCollections>
+          </items>
+        </ComboBox>
+        <ComboBox id="kernel" fx:id="scale" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+          <items>
+            <FXCollections fx:factory="observableArrayList">
+              <Integer fx:value="1" />
+              <Integer fx:value="2" />
+              <Integer fx:value="3" />
+              <Integer fx:value="4" />
+              <Integer fx:value="5" />
+              <Integer fx:value="6" />
+              <Integer fx:value="7" />
+              <Integer fx:value="8" />
+              <Integer fx:value="9" />
+              <Integer fx:value="10" />
+              <Integer fx:value="11" />
+              <Integer fx:value="12" />
+              <Integer fx:value="13" />
+              <Integer fx:value="14" />
+              <Integer fx:value="15" />
+              <Integer fx:value="16" />
+              <Integer fx:value="17" />
             </FXCollections>
           </items>
         </ComboBox>
@@ -66,7 +95,6 @@
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       </columnConstraints>
       <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

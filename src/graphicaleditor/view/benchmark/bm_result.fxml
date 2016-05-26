@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" minHeight="182.0" prefHeight="493.0" prefWidth="434.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.benchmark.BMResultController">
+  <children>
+    <TabPane layoutX="0.0" layoutY="0.0" prefHeight="493.0" prefWidth="434.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab fx:id="himenoTab" text="Himeno">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextArea fx:id="himeno" prefHeight="462.0" prefWidth="434.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="graph500Tab" text="Graph500">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="241.00009999999747" prefWidth="276.9998779296875">
+              <children>
+                <TextArea fx:id="graph500" prefHeight="462.0" prefWidth="434.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="nasTab" text="   NAS  ">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextArea fx:id="nas" prefHeight="462.0" prefWidth="434.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
+</AnchorPane>

@@ -1,0 +1,168 @@
+<?xml version='1.0'?>
+<!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd">
+<platform version="4">
+   <AS id="fsdf" routing="Dijkstra">
+      <host availability_file="" coordinates="" core="1" id="host000" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host001" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host002" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host010" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host011" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host012" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host100" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host101" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host102" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host110" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host111" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host112" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host200" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host201" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host202" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host210" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host211" pstate="0.0" speed="1000000000" state_file=""/>
+      <host availability_file="" coordinates="" core="1" id="host212" pstate="0.0" speed="1000000000" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link0" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link1" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link2" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link3" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link4" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link5" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link6" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link7" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link8" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link9" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link10" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link11" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link12" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link13" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link14" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link15" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link16" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link17" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link18" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link19" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link20" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link21" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link22" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link23" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link24" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link25" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link26" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link27" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link28" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link29" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link30" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link31" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link32" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link33" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link34" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link35" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link36" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link37" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link38" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link39" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link40" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link41" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link42" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link43" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <link bandwidth="1250000000" bandwidth_file="" id="link44" latency="0.0" latency_file="" sharing_policy="SHARED" state_file=""/>
+      <route dst="host001" src="host000" symmetrical="YES">
+         <link_ctn direction="NONE" id="link0"/>
+      </route>
+      <route dst="host002" src="host001" symmetrical="YES">
+         <link_ctn direction="NONE" id="link1"/>
+      </route>
+      <route dst="host011" src="host010" symmetrical="YES">
+         <link_ctn direction="NONE" id="link3"/>
+      </route>
+      <route dst="host012" src="host011" symmetrical="YES">
+         <link_ctn direction="NONE" id="link4"/>
+      </route>
+      <route dst="host101" src="host100" symmetrical="YES">
+         <link_ctn direction="NONE" id="link6"/>
+      </route>
+      <route dst="host102" src="host101" symmetrical="YES">
+         <link_ctn direction="NONE" id="link7"/>
+      </route>
+      <route dst="host111" src="host110" symmetrical="YES">
+         <link_ctn direction="NONE" id="link9"/>
+      </route>
+      <route dst="host112" src="host111" symmetrical="YES">
+         <link_ctn direction="NONE" id="link10"/>
+      </route>
+      <route dst="host201" src="host200" symmetrical="YES">
+         <link_ctn direction="NONE" id="link12"/>
+      </route>
+      <route dst="host202" src="host201" symmetrical="YES">
+         <link_ctn direction="NONE" id="link13"/>
+      </route>
+      <route dst="host211" src="host210" symmetrical="YES">
+         <link_ctn direction="NONE" id="link15"/>
+      </route>
+      <route dst="host212" src="host211" symmetrical="YES">
+         <link_ctn direction="NONE" id="link16"/>
+      </route>
+      <route dst="host010" src="host000" symmetrical="YES">
+         <link_ctn direction="NONE" id="link18"/>
+      </route>
+      <route dst="host011" src="host001" symmetrical="YES">
+         <link_ctn direction="NONE" id="link19"/>
+      </route>
+      <route dst="host012" src="host002" symmetrical="YES">
+         <link_ctn direction="NONE" id="link20"/>
+      </route>
+      <route dst="host110" src="host100" symmetrical="YES">
+         <link_ctn direction="NONE" id="link21"/>
+      </route>
+      <route dst="host111" src="host101" symmetrical="YES">
+         <link_ctn direction="NONE" id="link22"/>
+      </route>
+      <route dst="host112" src="host102" symmetrical="YES">
+         <link_ctn direction="NONE" id="link23"/>
+      </route>
+      <route dst="host210" src="host200" symmetrical="YES">
+         <link_ctn direction="NONE" id="link24"/>
+      </route>
+      <route dst="host211" src="host201" symmetrical="YES">
+         <link_ctn direction="NONE" id="link25"/>
+      </route>
+      <route dst="host212" src="host202" symmetrical="YES">
+         <link_ctn direction="NONE" id="link26"/>
+      </route>
+      <route dst="host100" src="host000" symmetrical="YES">
+         <link_ctn direction="NONE" id="link27"/>
+      </route>
+      <route dst="host200" src="host100" symmetrical="YES">
+         <link_ctn direction="NONE" id="link28"/>
+      </route>
+      <route dst="host101" src="host001" symmetrical="YES">
+         <link_ctn direction="NONE" id="link30"/>
+      </route>
+      <route dst="host201" src="host101" symmetrical="YES">
+         <link_ctn direction="NONE" id="link31"/>
+      </route>
+      <route dst="host102" src="host002" symmetrical="YES">
+         <link_ctn direction="NONE" id="link33"/>
+      </route>
+      <route dst="host202" src="host102" symmetrical="YES">
+         <link_ctn direction="NONE" id="link34"/>
+      </route>
+      <route dst="host110" src="host010" symmetrical="YES">
+         <link_ctn direction="NONE" id="link36"/>
+      </route>
+      <route dst="host210" src="host110" symmetrical="YES">
+         <link_ctn direction="NONE" id="link37"/>
+      </route>
+      <route dst="host111" src="host011" symmetrical="YES">
+         <link_ctn direction="NONE" id="link39"/>
+      </route>
+      <route dst="host211" src="host111" symmetrical="YES">
+         <link_ctn direction="NONE" id="link40"/>
+      </route>
+      <route dst="host112" src="host012" symmetrical="YES">
+         <link_ctn direction="NONE" id="link42"/>
+      </route>
+      <route dst="host212" src="host112" symmetrical="YES">
+         <link_ctn direction="NONE" id="link43"/>
+      </route>
+   </AS>
+</platform>

@@ -6,6 +6,7 @@
 package graphicaleditor.controller.benchmark;
 
 import graphicaleditor.controller.interfaces.AbstractDialogController;
+import graphicaleditor.controller.interfaces.IInit;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -17,7 +18,7 @@ import javafx.scene.control.TextField;
  *
  * @author KHANH
  */
-public class BMController extends AbstractDialogController {
+public class BMController extends AbstractDialogController implements IInit<Object> {
 
     @FXML
     private CheckBox useHimeno;
@@ -30,18 +31,21 @@ public class BMController extends AbstractDialogController {
 
     @FXML
     private TextField himenoNumprocs;
+    
+    @FXML
+    private ComboBox<String> himenoClass;
 
     @FXML
     private TextField graph500Numprocs;
 
     @FXML
-    private TextField scale;
+    private ComboBox<Integer> scale;
 
-    @FXML
-    private TextField edgeFactor;
-
-    @FXML
-    private TextField engine;
+//    @FXML
+//    private TextField edgeFactor;
+//
+//    @FXML
+//    private TextField engine;
 
     @FXML
     private ComboBox<String> kernel;
@@ -52,28 +56,12 @@ public class BMController extends AbstractDialogController {
     @FXML
     private ComboBox<Integer> NASNumprocs;
 
-    public TextField getScale() {
+    public ComboBox<Integer> getScale() {
         return scale;
     }
 
-    public void setScale(TextField scale) {
+    public void setScale(ComboBox<Integer> scale) {
         this.scale = scale;
-    }
-
-    public TextField getEdgeFactor() {
-        return edgeFactor;
-    }
-
-    public void setEdgeFactor(TextField edgeFactor) {
-        this.edgeFactor = edgeFactor;
-    }
-
-    public TextField getEngine() {
-        return engine;
-    }
-
-    public void setEngine(TextField engine) {
-        this.engine = engine;
     }
 
     public TextField getHimenoNumprocs() {
@@ -82,6 +70,14 @@ public class BMController extends AbstractDialogController {
 
     public void setHimenoNumprocs(TextField himenoNumprocs) {
         this.himenoNumprocs = himenoNumprocs;
+    }
+
+    public ComboBox<String> getHimenoClass() {
+        return himenoClass;
+    }
+
+    public void setHimenoClass(ComboBox<String> himenoClass) {
+        this.himenoClass = himenoClass;
     }
 
     public TextField getGraph500Numprocs() {
@@ -143,12 +139,13 @@ public class BMController extends AbstractDialogController {
     boolean changeKernel = false;
     boolean changeClass = false;
 
-    public void init() {
+    public void init(Object o) {
         himenoNumprocs.setDisable(true);
+        himenoClass.setDisable(true);
         graph500Numprocs.setDisable(true);
-        edgeFactor.setDisable(true);
+//        edgeFactor.setDisable(true);
         scale.setDisable(true);
-        engine.setDisable(true);
+//        engine.setDisable(true);
         NASNumprocs.setDisable(true);
         kernel.setDisable(true);
         klass.setDisable(true);
@@ -158,6 +155,7 @@ public class BMController extends AbstractDialogController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 himenoNumprocs.setDisable(!newValue);
+                himenoClass.setDisable(!newValue);
             }
         });
 
@@ -166,9 +164,9 @@ public class BMController extends AbstractDialogController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 graph500Numprocs.setDisable(!newValue);
-                edgeFactor.setDisable(!newValue);
+//                edgeFactor.setDisable(!newValue);
                 scale.setDisable(!newValue);
-                engine.setDisable(!newValue);
+//                engine.setDisable(!newValue);
             }
         });
 

@@ -11,6 +11,7 @@ import graphicaleditor.controller.FXMLDocumentController;
 import graphicaleditor.controller.fileprocessors.TextFileProcessor;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
 import graphicaleditor.controller.fileprocessors.XMLProcessor;
+import graphicaleditor.controller.interfaces.IInit;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.HostView;
 import java.io.File;
@@ -39,7 +40,7 @@ import javafx.util.Callback;
  *
  * @author KHANH
  */
-public class HostFileController extends AbstractDialogController {
+public class HostFileController extends AbstractDialogController implements IInit<Object> {
 
     @FXML
     private ListView listView;
@@ -67,7 +68,7 @@ public class HostFileController extends AbstractDialogController {
         c.setHostFileController(this);
     }
 
-    public void init() {
+    public void init(Object o) {
 
         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
 

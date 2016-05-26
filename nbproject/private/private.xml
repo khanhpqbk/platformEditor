@@ -3,27 +3,21 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/xml/TextFileReader.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/xml/XMLProcessor.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/TextModeController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/benchmark/BMController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/gentopo/ring.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/HostDetailController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/gentopo/MeshController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/gentopo/mesh.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/gentopo/torus_1.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/interfaces/AbstractDialogController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/FXMLDocument.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/gentopo/star.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/benchmark/bm.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/gentopo/TorusController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/graphicalmode.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/benchmark/HostFileController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/FXMLDocumentController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/view/gentopo/torus.fxml</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/GraphicalModeController.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/model/benchmark/Graph500.java</file>
-            <file>file:/E:/CODING/JAVA-Netbeans/GraphicalEditor/src/graphicaleditor/controller/gentopo/RingController.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/fileprocessors/BMResultProcessor.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/model/HostView.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/FXMLDocumentController.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/interfaces/IHandler.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/benchmark/BMResultController.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/interfaces/AbstractDialogController.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/benchmark/BMController.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/connection/Result.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/fileprocessors/XMLProcessor.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/GraphicalModeController.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/connection/JavaClient.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/fileprocessors/CoDecomFileProcessor.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/view/benchmark/bm.fxml</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/model/LinkView.java</file>
+            <file>file:/home/khanh/Downloads/Downloads/src/graphicaleditor/controller/benchmark/HostFileController.java</file>
         </group>
     </open-files>
 </project-private>

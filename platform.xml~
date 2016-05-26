@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd">
+<platform version="4">
+   <AS id="sdf" routing="Full">
+      <host id="0" speed="1000000000"/>
+      <host id="1" speed="1000000000"/>
+      <host id="2" speed="1000000000"/>
+      <host id="main_router" speed="1000000000"/>
+      <link bandwidth="1250000000" id="link0" latency="0.0"/>
+      <link bandwidth="1250000000" id="link1" latency="0.0"/>
+      <link bandwidth="1250000000" id="link2" latency="0.0"/>
+      <route dst="0" src="main_router">
+         <link_ctn id="link0"/>
+      </route>
+      <route dst="1" src="main_router">
+         <link_ctn id="link1"/>
+      </route>
+      <route dst="2" src="main_router">
+         <link_ctn id="link2"/>
+      </route>
+   </AS>
+</platform>

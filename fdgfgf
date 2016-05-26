@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<platform version="3">
+    <AS id="AS11">
+        <host availability="0.0" coordinates="0" core="0" id="host11" power="0" pstate="0.0" state="ON"/>
+        <host availability="0.0" coordinates="0" core="0" id="host12" power="0" pstate="0.0" state="ON"/>
+        <route dst="host12" src="host11" symmetry="yes">
+            <link_ctn id="link2732"/>
+        </route>
+        <link bandwidth="100" id="link2732" latency="0" sharing_policy="" state="ON"/>
+        <router id="router13"/>
+        <route dst="router13" src="host11" symmetry="yes">
+            <link_ctn id="link9891"/>
+        </route>
+        <link bandwidth="100" id="link9891" latency="0" sharing_policy="" state="ON"/>
+        <route dst="router13" src="host12" symmetry="yes">
+            <link_ctn id="link2305"/>
+        </route>
+        <link bandwidth="100" id="link2305" latency="0" sharing_policy="" state="ON"/>
+        <route dst="host11" src="router13" symmetry="yes">
+            <link_ctn id="link3824"/>
+        </route>
+        <link bandwidth="100" id="link3824" latency="0" sharing_policy="" state="ON"/>
+    </AS>
+</platform>

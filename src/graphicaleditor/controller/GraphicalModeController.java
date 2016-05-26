@@ -758,7 +758,7 @@ public class GraphicalModeController implements Initializable {
                 if (!isOutside) {
                     id++;
                     Image img = new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true);
-                    HostView h = new HostView(img, "host" + id, 0, "ON");
+                    HostView h = new HostView(img, "host" + id, 1000000000, "ON");
                     addHostViewOrRouterView(h, event.getX(), event.getY());
                     asNow.getHostList().add(h);
                     FXMLDocumentController c = (FXMLDocumentController) parentController;
@@ -890,66 +890,7 @@ public class GraphicalModeController implements Initializable {
             parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
         };
 
-        parentController.showDialog(false, "host details", 500, 400, "hostdetail", handler, dialog, h);
-
-//        System.out.println("show host details");
-//        try {
-////            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("graphicaleditor/view/hostdetail.fxml"));
-////            HostDetailController controller = new HostDetailController(h);
-//            FXMLLoader loader = new FXMLLoader(
-//                    getClass().getClassLoader().getResource(
-//                            "graphicaleditor/view/hostdetail.fxml"
-//                    )
-//            );
-//            final Stage dialog = new Stage();
-//            Parent root = (Parent) loader.load();
-//
-//            HostDetailController controller
-//                    = loader.<HostDetailController>getController();
-//
-//            controller.setHostView(h);
-//            controller.init(h);
-//            controller.setParentController(this);
-//
-//            controller.getOkBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-//
-//                @Override
-//                public void handle(MouseEvent event) {
-////                hostView.setmId(id.getText());
-////                hostView.setPower(Integer.parseInt(power.getText()));
-////                hostView.setState(Boolean.parseBoolean(state.getText()));
-//                    HostView newHost = controller.createHostFromFields();
-//
-//                    parentController.getTextModeController().modifyHostXml(newHost, h.getmId());
-//                    saveRouteFromFields(asNow, newHost, h);
-//                    saveHostFromFields(h, newHost);
-//                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
-//                    dialog.close();
-//                    // TODO: change host details
-//                    System.out.println("mouse clicked btn ok");
-//                }
-//
-//            });
-//
-//            controller.getCancelBtn().setOnMouseClicked(new EventHandler<MouseEvent>() {
-//
-//                @Override
-//                public void handle(MouseEvent event) {
-////                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//                    dialog.close();
-//                    System.out.println("mouse clicked btn cancel");
-//                }
-//            });
-//
-//            Scene scene = new Scene(root, 500, 400);
-//
-////            dialog.initStyle(StageStyle.UTILITY);
-//            dialog.setScene(scene);
-//            dialog.show();
-//
-//        } catch (IOException ex) {
-//            Logger.getLogger(GraphicalModeController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        parentController.showDialog(3, "host details", 500, 400, "hostdetail", handler, dialog, h);
     }
 
     private void saveRouteFromFields(ASView asNow, HostView newHost, HostView oldHost) {

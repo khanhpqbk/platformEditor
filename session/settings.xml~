@@ -1,0 +1,4 @@
+<simulation>
+   <benchmark class="" numprocs="0" type="himeno"/>
+   <benchmark class="S" kernel="bt" numprocs="16" type="NAS"/>
+</simulation>

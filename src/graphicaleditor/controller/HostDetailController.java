@@ -7,6 +7,7 @@ package graphicaleditor.controller;
 
 import graphicaleditor.controller.fileprocessors.XMLProcessor;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
+import graphicaleditor.controller.interfaces.IInit;
 import graphicaleditor.model.HostView;
 import java.io.IOException;
 import java.net.URL;
@@ -28,7 +29,7 @@ import org.xml.sax.SAXException;
  *
  * @author KHANH
  */
-public class HostDetailController extends AbstractDialogController {
+public class HostDetailController extends AbstractDialogController implements IInit<HostView>{
 
     @FXML
     private TextField id;

@@ -1,0 +1,28 @@
+<platform version="4">
+   <AS id="AS11" routing="Dijkstra">
+      <host id="host11" speed="1000000000"/>
+      <host id="host12" speed="1000000000"/>
+      <host id="host13" speed="1000000000"/>
+      <host id="host14" speed="1000000000"/>
+      <link bandwidth="1250000000" id="link3703" latency="0"/>
+      <link bandwidth="1250000000" id="link1514" latency="0"/>
+      <link bandwidth="1250000000" id="link8925" latency="0"/>
+      <link bandwidth="1250000000" id="link6629" latency="0"/>
+      <link bandwidth="1250000000" id="link4499" latency="0"/>
+      <route dst="host13" src="host14">
+         <link_ctn id="link3703"/>
+      </route>
+      <route dst="host11" src="host14">
+         <link_ctn id="link1514"/>
+      </route>
+      <route dst="host11" src="host11">
+         <link_ctn id="link8925"/>
+      </route>
+      <route dst="host13" src="host11">
+         <link_ctn id="link6629"/>
+      </route>
+      <route dst="host12" src="host11">
+         <link_ctn id="link4499"/>
+      </route>
+   </AS>
+</platform>

@@ -5,6 +5,9 @@
  */
 package graphicaleditor.controller;
 
+import graphicaleditor.connection.*;
+//import graphicaleditor.connection.SessionStatus;
+//import graphicaleditor.connection.StatusCode;
 import graphicaleditor.controller.fileprocessors.XMLProcessor;
 import graphicaleditor.controller.gentopo.TorusController;
 import graphicaleditor.controller.gentopo.MeshController;
@@ -12,23 +15,35 @@ import graphicaleditor.controller.gentopo.RingController;
 import graphicaleditor.controller.gentopo.StarController;
 import graphicaleditor.controller.benchmark.BMController;
 import graphicaleditor.controller.benchmark.HostFileController;
+import graphicaleditor.controller.fileprocessors.BMResultProcessor;
+import graphicaleditor.controller.fileprocessors.CoDecomFileProcessor;
 import graphicaleditor.controller.fileprocessors.TextFileProcessor;
 import graphicaleditor.controller.interfaces.AbstractDialogController;
+import graphicaleditor.controller.interfaces.Controller;
 import graphicaleditor.controller.interfaces.IHandler;
+import graphicaleditor.controller.interfaces.IInit;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.Host;
 import graphicaleditor.model.HostView;
 import graphicaleditor.model.LinkView;
+import graphicaleditor.model.benchmark.Benchmark;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -51,6 +66,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,22 +86,26 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private GraphicalModeController graphicalModeController;
-    
+
     private HostFileController hostFileController;
 
     private File selectedFile;
 
+    private SessionStatus sessionStatus;
+    private JavaClient client = null;
+
     @FXML
     private MenuItem turnOnOff;
-    
+
     public void setHostFileController(HostFileController c) {
         hostFileController = c;
     }
-    
+
     public HostFileController getHostFileController() {
         return hostFileController;
     }
-     /**
+
+    /**
      * Handle action related to "About" menu item.
      *
      * @param event Event on "About" menu item.
@@ -165,11 +185,12 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    public void showDialog(boolean isGen, String message, int width, int height, String fxmlName, IHandler okHandler, Stage d, HostView h) {
-        if (isGen) {
+    public void showDialog(int type, String message, int width, int height, String fxmlName, IHandler okHandler, Stage d, Object initData) {
+        if (type == 0) { // gen topo
             graphicalModeController.clearView();
             textModeController.clearText();
         }
+
         System.out.println(message);
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -180,52 +201,58 @@ public class FXMLDocumentController implements Initializable {
 //            final Stage dialog = new Stage();
             Parent root = (Parent) loader.load();
 
-            AbstractDialogController controller
-                    = loader.<AbstractDialogController>getController();
-            
-            
-            if (controller instanceof HostDetailController) {
-                HostDetailController c = (HostDetailController) controller;
-                c.setHostView(h);
-                c.init(h);
-            } else if (controller instanceof BMController) {
-                BMController c = (BMController) controller;
-                c.init();
-            } else if (controller instanceof HostFileController) {
-                HostFileController c = (HostFileController) controller;
-                c.init();
+            Controller controller
+                    = loader.<Controller>getController();
+
+            if (controller instanceof IInit) {
+                IInit c = (IInit) controller;
+//                c.setHostView(h);
+                c.init(initData);
             }
-            controller.setParentController(this);
 
-            controller.getOkBtn().setOnMouseClicked(
-                    new EventHandler<MouseEvent>() {
+            if (controller instanceof AbstractDialogController) {
+                AbstractDialogController c = (AbstractDialogController) controller;
+                c.setParentController(this);
 
-                        @Override
-                        public void handle(MouseEvent event) {
-                            if(!(controller instanceof HostFileController)) {
-                                FileChooser chooser = new FileChooser();
-                                selectedFile = chooser.showSaveDialog(null);
-                            }
+                c.getOkBtn().setOnMouseClicked(
+                        new EventHandler<MouseEvent>() {
 
-                            if (isGen) {
-                                generatePlatformElement();
-                            }
-                            if (okHandler != null) {
-                                okHandler.handle(controller);
-                            }
-                            d.close();
-                            if (isGen) {
-                                textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
-                            }
+                    @Override
+                    public void handle(MouseEvent event) {
+//                            if(!(controller instanceof HostFileController)) {
+//                                FileChooser chooser = new FileChooser();
+//                                selectedFile = chooser.showSaveDialog(null);
+//                            }
 
+                        if (type == 0) {
+                            DirectoryChooser chooser = new DirectoryChooser();
+                            selectedFile = new File(chooser.showDialog(null).getAbsolutePath(), "platform.xml");
+                            generatePlatformElement();
+                        } else if (type == 1) // gen BM 
+                        {
+                            DirectoryChooser chooser = new DirectoryChooser();
+                            selectedFile = new File(chooser.showDialog(null).getAbsolutePath(), "settings.xml");
+                            generateBMElement();
+                        }
+                           
+                        if (okHandler != null) {
+                            okHandler.handle(c);
+                        }
+                        d.close();
+
+                        if (type == 0) {
+                            textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
                         }
 
                     }
-            );
 
-            controller.getCancelBtn().setOnMouseClicked((MouseEvent event) -> {
-                d.close();
-            });
+                }
+                );
+
+                c.getCancelBtn().setOnMouseClicked((MouseEvent event) -> {
+                    d.close();
+                });
+            }
 
             Scene scene = new Scene(root, width, height);
 
@@ -241,7 +268,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void genRing() {
         final Stage d = new Stage();
-        showDialog(true, "ring", 400, 400, "gentopo/ring", new IHandler() {
+        showDialog(0, "ring", 400, 400, "gentopo/ring", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
@@ -259,7 +286,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void genStar() {
         final Stage d = new Stage();
-        showDialog(true, "star", 400, 400, "gentopo/star", new IHandler() {
+        showDialog(0, "star", 400, 400, "gentopo/star", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
@@ -267,7 +294,7 @@ public class FXMLDocumentController implements Initializable {
                 XMLProcessor processor = new XMLProcessor(selectedFile.getAbsolutePath());
                 ASView as = new ASView(null, c.getAsId().getText());
                 processor.generateStarTopo(false, as, Integer.parseInt(c.getNumOfHost().getText()),
-                        "", "", 0, 0, 0);
+                        "", "", 0, 1000000000, 1250000000);
                 processor.parse();
                 graphicalModeController.renderOutsideView(processor);
                 textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
@@ -280,7 +307,7 @@ public class FXMLDocumentController implements Initializable {
     private void genTorus() {
 
         final Stage d = new Stage();
-        showDialog(true, "torus", 400, 400, "gentopo/torus", new IHandler() {
+        showDialog(0, "torus", 400, 400, "gentopo/torus", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
@@ -300,7 +327,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void genMesh() {
         final Stage d = new Stage();
-        showDialog(true, "genMesh", 400, 400, "gentopo/mesh", new IHandler() {
+        showDialog(0, "genMesh", 400, 400, "gentopo/mesh", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
@@ -322,8 +349,8 @@ public class FXMLDocumentController implements Initializable {
             FileWriter fileWriter = null;
 
             fileWriter = new FileWriter(selectedFile);
-            fileWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<benchmarks version=\"3\" >" + "</benchmarks>");
+            fileWriter.write(
+                    "<simulation>" + "</simulation>");
             fileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -333,63 +360,133 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void genBM() {
         final Stage d = new Stage();
-        showDialog(false, "bm", 500, 800, "benchmark/bm", new IHandler() {
+        showDialog(1, "bm", 500, 800, "benchmark/bm", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
                 BMController c = (BMController) controller;
-                generateBMElement();
                 XMLProcessor p = new XMLProcessor(selectedFile.getAbsolutePath());
                 boolean useHimeno = c.getUseHimeno().isSelected();
                 boolean useGraph500 = c.getUseGraph500().isSelected();
                 boolean useNAS = c.getUseNAS().isSelected();
-                int HimenoNumprocs = c.getHimenoNumprocs().getText().isEmpty()? 0 : Integer.parseInt(c.getHimenoNumprocs().getText());
-                int graph500Numprocs = c.getGraph500Numprocs().getText().isEmpty()? 0 : Integer.parseInt(c.getGraph500Numprocs().getText()); ;
-                int scale = c.getScale().getText().isEmpty()? 0 : Integer.parseInt(c.getScale().getText());;
-                int edgeFactor = c.getEdgeFactor().getText().isEmpty()? 0 : Integer.parseInt(c.getEdgeFactor().getText());;
-                int engine = c.getEngine().getText().isEmpty()? 0 : Integer.parseInt(c.getEngine().getText());;
-                String kernel = c.getKernel().getValue();
-                String klass = c.getKlass().getValue();
-                int NASNumprocs = c.getNASNumprocs().getValue();
-                
-                p.genBM(useHimeno, useGraph500, useNAS, HimenoNumprocs, graph500Numprocs, scale, edgeFactor, engine, kernel, klass, NASNumprocs);
+                String himenoClass = "";
+                int HimenoNumprocs = 0;
+                int graph500Numprocs = 0;
+                int scale = 0;
+                String kernel = "";
+                String klass = "";
+                int NASNumprocs = 0;
+
+                if (useHimeno) {
+                    himenoClass = c.getHimenoClass().getValue();
+                    HimenoNumprocs = c.getHimenoNumprocs().getText().isEmpty() ? 0 : Integer.parseInt(c.getHimenoNumprocs().getText());
+                }
+                if (useGraph500) {
+                    graph500Numprocs = c.getGraph500Numprocs().getText().isEmpty() ? 0 : Integer.parseInt(c.getGraph500Numprocs().getText());;
+                    scale = c.getScale().getValue();
+                }
+//                int edgeFactor = c.getEdgeFactor().getText().isEmpty()? 0 : Integer.parseInt(c.getEdgeFactor().getText());;
+//                int engine = c.getEngine().getText().isEmpty()? 0 : Integer.parseInt(c.getEngine().getText());;
+                if (useNAS) {
+                    kernel = c.getKernel().getValue();
+                    klass = c.getKlass().getValue();
+                    NASNumprocs = c.getNASNumprocs().getValue();
+                }
+
+                p.genBM(useHimeno, useGraph500, useNAS, HimenoNumprocs, himenoClass, graph500Numprocs, scale, kernel, klass, NASNumprocs);
             }
         }, d, null);
     }
-    
-    
+
     @FXML
     private void genHostfile() {
         final Stage d = new Stage();
-        showDialog(false, "bm", 400, 400, "benchmark/hostfile", new IHandler() {
+        showDialog(2, "hostfile", 400, 400, "benchmark/hostfile", new IHandler() {
 
             @Override
             public void handle(AbstractDialogController controller) {
-                File savedFile = getHostFileController().getSavedFile();
+                
                 File selectedF = getHostFileController().getSelectedFile();
+                File savedFile = new File(selectedF.getParent(), "hostfile");
                 XMLProcessor p = getHostFileController().getXMLProcessor();
-                if (savedFile != null && selectedF != null && p != null) {
-                    
+                if (selectedF != null && p != null) {
+
                     List<String> list = new ArrayList<>();
-                    for(HostView h: p.getAsList().get(0).getHostList()) {
-                        if(h.isSelected()) 
+                    for (HostView h : p.getAsList().get(0).getHostList()) {
+                        if (h.isSelected()) {
                             list.add(h.getmId());
+                        }
                     }
-                    if(list.size() > 0) {
+                    if (list.size() > 0) {
                         new TextFileProcessor().write(savedFile, list);
                         System.out.println("writing...");
                     } else {
                         System.out.println("no hostfile chosen");
                     }
-                    
+
                 }
             }
         }, d, null);
     }
-    
+
     @FXML
     private void genConfig() {
-        
+
+    }
+
+    @FXML
+    private void simulate() {
+        DirectoryChooser dc = new DirectoryChooser();
+        File dir = dc.showDialog(null);
+        if (dir != null) {
+            client = new JavaClient(dir.getAbsolutePath());
+            sessionStatus = client.simulate();
+
+            //nen dung progressDialog
+            System.out.println("simulating session id = " + sessionStatus.output);
+        }
+
+    }
+
+    @FXML
+    private void getResult() {
+        try {
+            if (client == null) {
+                // dialog simulation chua bat dau
+                System.out.println("simulation not started.");
+                return;
+            } else if (client != null && !StatusCode.FINISHED.equals(client.getStatusCode(sessionStatus.output))) {
+
+                // dialog simulation chua ket thuc
+                System.out.println("simulation not finished!");
+                return;
+            }
+            // dialog get result
+            Result res = client.getResult(sessionStatus.output);
+            // end dialog get result
+
+            ByteBuffer bb = res.resultfile;
+            File f = new File("/home/khanh/zipfile.zip");
+
+            FileChannel wChannel = new FileOutputStream(f, false).getChannel();
+
+//            bb.flip();
+            wChannel.write(bb);
+
+            wChannel.close();
+
+            // dialog analyzing result
+            new CoDecomFileProcessor().unZipIt("/home/khanh/zipfile.zip", "/home/khanh/unzipfolder");
+            List<Benchmark> bms = new BMResultProcessor().parseResult("/home/khanh/unzipfolder");
+            // end dialog analyzing result
+
+            final Stage d = new Stage();
+            showDialog(3, "bm result", 500, 600, "benchmark/bm_result", null, d, bms);
+
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @FXML
@@ -403,7 +500,6 @@ public class FXMLDocumentController implements Initializable {
         } else {
             graphicalModeController.setRoomMode(true);
             graphicalModeController.clearView();
-
             graphicalModeController.renderInsideView(graphicalModeController.getASNow());
             turnOnOff.setText("Turn off");
         }
@@ -442,8 +538,9 @@ public class FXMLDocumentController implements Initializable {
             FileWriter fileWriter = null;
 
             fileWriter = new FileWriter(selectedFile);
-            fileWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                    + "<platform version=\"3\">" + "</platform>");
+            fileWriter.write("<?xml version='1.0'?>\n" +
+"<!DOCTYPE platform SYSTEM \"http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd\">" +
+                    "<platform version=\"4\">" + "</platform>");
             fileWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -494,7 +591,7 @@ public class FXMLDocumentController implements Initializable {
     public File getSelectedFile() {
         return selectedFile;
     }
-    
+
     public void setSeletedFile(File f) {
         selectedFile = f;
     }

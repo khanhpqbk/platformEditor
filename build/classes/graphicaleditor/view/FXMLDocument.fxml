@@ -49,10 +49,13 @@
             <MenuItem text="Add restricted area" onAction="#addRestrictedArea" />
           </items>
         </Menu>
-        <Menu text="Benchmarking">
+        <Menu text="Simulation">
             <MenuItem text="Add benchmarks" onAction="#genBM"  />
             <MenuItem text="Add hostfile" onAction="#genHostfile"  />
             <MenuItem text="Add configuration paramaters" onAction="#genConfig"  />
+            <SeparatorMenuItem />
+            <MenuItem text="Start simulation" onAction="#simulate"  />
+            <MenuItem text="Get simulation result" onAction="#getResult"  />
         </Menu>
         <Menu text="Help">
           <items>

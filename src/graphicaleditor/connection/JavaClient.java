@@ -1,3 +1,5 @@
+package graphicaleditor.connection;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -18,7 +20,9 @@
  */
 
 // Generated code
+import graphicaleditor.connection.SessionStatus;
 import graphicaleditor.connection.SimulationSystemService;
+import graphicaleditor.controller.fileprocessors.CoDecomFileProcessor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,6 +35,8 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.thrift.TException;
@@ -40,111 +46,81 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 //import sun.misc.IOUtils;
 
 public class JavaClient {
-
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-
+    TTransport transport;
+    SimulationSystemService.Client client;
+    String dir;
+    
+    public JavaClient(String dir) {
         try {
-            TTransport transport;
-
-            transport = new TSocket("192.168.1.53", 1234);
+            this.dir = dir;
+//            transport = new TSocket("127.0.0.1", 26102);
+//            transport = new TSocket("58.187.134.226", 7624);
+            transport = new TSocket("192.168.1.141", 26102);
             transport.open();
-
-            TProtocol protocol = new TBinaryProtocol(transport);
-            SimulationSystemService.Client client = new SimulationSystemService.Client(protocol);
-//            RandomAccessFile aFile = new RandomAccessFile(
-//                    "C:/zipfile.zip", "r");
-//            FileChannel inChannel = aFile.getChannel();
-//            long fileSize = inChannel.size();
-//            ByteBuffer buffer = ByteBuffer.allocate((int) fileSize);
-//            inChannel.read(buffer);
-//            //buffer.rewind();
-//            buffer.flip();
-//            for (int i = 0; i < fileSize; i++) {
-//                System.out.print((char) buffer.get());
-//            }
-//            inChannel.close();
-//            aFile.close();
-//            client.simulate(buffer);
             
-            client.ping();
+            TProtocol protocol = new TBinaryProtocol(transport);
+            client = new SimulationSystemService.Client(protocol);
+        } catch (TTransportException ex) {
+            Logger.getLogger(JavaClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-            transport.close();
+    public SessionStatus simulate() {
+        SessionStatus sessionStatus = null;
+        try {       
+            new CoDecomFileProcessor().zipDirSimgrid(dir, "/home/khanh/sessionZip.zip");
+            RandomAccessFile aFile = new RandomAccessFile(
+                    "/home/khanh/sessionZip.zip", "r");
+            FileChannel inChannel = aFile.getChannel();
+            long fileSize = inChannel.size();
+            ByteBuffer buffer = ByteBuffer.allocate((int) fileSize);
+            inChannel.read(buffer);
+            //buffer.rewind();
+            buffer.flip();
+            inChannel.close();
+            aFile.close();
+            client.ping();
+            sessionStatus = client.simulate(buffer);
+            System.out.println("" + sessionStatus.status.toString());
+
         } catch (TException x) {
             x.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(JavaClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return sessionStatus;
+    }
+    
+    public Result getResult(String sessionId) {
+        if (client != null) {
+            try {
+                return client.getResultFile(sessionId);
+            } catch (TException ex) {
+                Logger.getLogger(graphicaleditor.connection.JavaClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+    
+    public StatusCode getStatusCode(String sessionId) {
+        if (client != null) {
+            try {
+                SessionStatus stt =
+                        client.getSessionStatus(sessionId);
+                System.out.println(stt.output);
+                return stt.status;
+            } catch (TException ex) {
+                Logger.getLogger(JavaClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
     }
 
-    /**
-     * Zip the contents of the directory, and save it in the zipfile
-     */
-    private static void zipDirectory(String dir, String zipfile)
-            throws IOException, IllegalArgumentException {
-        // Check that the directory is a directory, and get its contents
-        File d = new File(dir);
-        if (!d.isDirectory()) {
-            throw new IllegalArgumentException("Not a directory:  "
-                    + dir);
-        }
-        String[] entries = d.list();
-        byte[] buffer = new byte[4096]; // Create a buffer for copying
-        int bytesRead;
+    
 
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile));
-
-        for (int i = 0; i < entries.length; i++) {
-            File f = new File(d, entries[i]);
-            if (f.isDirectory()) {
-                continue;//Ignore directory
-            }
-            FileInputStream in = new FileInputStream(f); // Stream to read file
-            ZipEntry entry = new ZipEntry(f.getPath()); // Make a ZipEntry
-            out.putNextEntry(entry); // Store entry
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-            in.close();
-        }
-        out.close();
-    }
-
-//    public static void main(String[] args) throws IOException {
-//        zipDirectory("C:/ziptest", "C:/zipfile");
-//        
-//    }
-//  private static void perform(Calculator.Client client) throws TException
-//  {
-//    client.ping();
-//    System.out.println("ping()");
-//
-//    int sum = client.add(1,1);
-//    System.out.println("1+1=" + sum);
-//
-//    Work work = new Work();
-//
-//    work.op = Operation.DIVIDE;
-//    work.num1 = 1;
-//    work.num2 = 0;
-//    try {
-//      int quotient = client.calculate(1, work);
-//      System.out.println("Whoa we can divide by 0");
-//    } catch (InvalidOperation io) {
-//      System.out.println("Invalid operation: " + io.why);
-//    }
-//
-//    work.op = Operation.SUBTRACT;
-//    work.num1 = 15;
-//    work.num2 = 10;
-//    try {
-//      int diff = client.calculate(1, work);
-//      System.out.println("15-10=" + diff);
-//    } catch (InvalidOperation io) {
-//      System.out.println("Invalid operation: " + io.why);
-//    }
-//
-//    SharedStruct log = client.getStruct(1);
-//    System.out.println("Check log: " + log.value);
-//  }
 }

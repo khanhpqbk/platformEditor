@@ -5,6 +5,9 @@
  */
 package graphicaleditor.controller.fileprocessors;
 
+//import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
+import com.icl.saxon.TransformerFactoryImpl;
+import com.icl.saxon.aelfred.SAXParserFactoryImpl;
 import graphicaleditor.controller.GraphicalModeController;
 import graphicaleditor.model.ASView;
 import graphicaleditor.model.ClusterView;
@@ -17,6 +20,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -26,12 +32,19 @@ import javafx.scene.image.Image;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+//import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -41,7 +54,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 /**
  *
@@ -75,8 +92,52 @@ public class XMLProcessor {
         }
     }
 
-    private void saveXml(File inputFile) throws TransformerException {
+    private void sortChildNodes(Node node, boolean descending,
+            int depth, Comparator comparator) {
+
+        List nodes = new ArrayList();
+        NodeList childNodeList = node.getChildNodes();
+        if (depth > 0 && childNodeList.getLength() > 0) {
+            for (int i = 0; i < childNodeList.getLength(); i++) {
+                Node tNode = childNodeList.item(i);
+                sortChildNodes(tNode, descending, depth - 1,
+                        comparator);
+                // Remove empty text nodes
+                if ((!(tNode instanceof Text))
+                        || (tNode instanceof Text && ((Text) tNode)
+                        .getTextContent().trim().length() > 1)) {
+                    nodes.add(tNode);
+                }
+            }
+            Comparator comp = (comparator != null) ? comparator
+                    : new DefaultNodeNameComparator();
+            if (descending) {
+                //if descending is true, get the reverse ordered comparator
+                Collections.sort(nodes, Collections.reverseOrder(comp));
+            } else {
+                Collections.sort(nodes, comp);
+            }
+
+            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+                Node element = (Node) iter.next();
+                node.appendChild(element);
+            }
+        }
+
+    }
+
+    class DefaultNodeNameComparator implements Comparator {
+
+        public int compare(Object arg0, Object arg1) {
+            return ((Node) arg0).getNodeName().compareTo(
+                    ((Node) arg1).getNodeName());
+        }
+
+    }
+
+    private void saveXml(File inputFile) {
         try {
+
             XPathFactory xpathFactory = XPathFactory.newInstance();
             // XPath to find empty text nodes.
             XPathExpression xpathExp = xpathFactory.newXPath().compile(
@@ -100,9 +161,45 @@ public class XMLProcessor {
 
             StreamResult file = new StreamResult(inputFile);
             transformer.transform(source, file);
+
+            
+            TransformerFactory factory = TransformerFactory.newInstance();
+        Source xslt = new StreamSource(new File("/home/khanh/input.xslt"));
+        Transformer tf = factory.newTransformer(xslt);
+
+        Source text = new StreamSource(inputFile);
+        tf.transform(text, new StreamResult(inputFile));
+            
+//            sortChildNodes(doc.getDocumentElement().getElementsByTagName("AS").item(0), false, 2, null);
+            // sortS
+//            SAXParserFactory spf = SAXParserFactoryImpl.newInstance();
+//            spf.setNamespaceAware(true);
+//            spf.setValidating(false);
+//            spf.setFeature("http://xml.org/sax/features/validation", false);
+//            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+//            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+//            SAXParser sp = spf.newSAXParser();
+//            Source src = new SAXSource(sp.getXMLReader(), new InputSource(inputFile.getAbsolutePath()));
+//            // change here
+//            String resultFileName = inputFile.getAbsolutePath().replaceAll(".xml$", ".cooked.xml");
+//            
+//            Result result = new StreamResult(inputFile);
+////            TransformerFactory tf = TransformerFactory.newInstance();
+//            TransformerFactory tf = new TransformerFactoryImpl();
+//            
+//            Source xsltSource = new StreamSource(new File("/home/khanh/xslt.input"));
+//            Transformer xsl = tf.newTransformer(xsltSource);
+//            xsl.setParameter("srcDocumentName", inputFile.getName());
+//            xsl.setParameter("srcDocumentPath", inputFile.getAbsolutePath());
+//
+//            xsl.transform(src, result);
         } catch (XPathExpressionException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
+
     }
 
     public void createRootElement() {
@@ -128,12 +225,8 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            // write the content on file
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // write the content on file
+        saveXml(inputFile);
 
     }
 
@@ -160,24 +253,21 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            // write the content on file
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // write the content on file
+        saveXml(inputFile);
+
     }
 
     private Node buildNodeFromHostView(Document d, HostView h) {
         Node n = d.createElement("host");
         Element e = (Element) n;
         e.setAttribute("id", h.getmId());
-        e.setAttribute("power", String.valueOf(h.getPower()));
-        e.setAttribute("state", h.getState());
-        e.setAttribute("availability", String.valueOf(h.getAvailability()));
-        e.setAttribute("pstate", String.valueOf(h.getPstate()));
-        e.setAttribute("core", String.valueOf(h.getCore()));
-        e.setAttribute("coordinates", String.valueOf(h.getCoordinates()));
+        e.setAttribute("speed", String.valueOf(h.getPower()));
+//        e.setAttribute("state", h.getState());
+//        e.setAttribute("availability", String.valueOf(h.getAvailability()));
+//        e.setAttribute("pstate", String.valueOf(h.getPstate()));
+//        e.setAttribute("core", String.valueOf(h.getCore()));
+//        e.setAttribute("coordinates", String.valueOf(h.getCoordinates()));
         return n;
     }
 
@@ -213,11 +303,8 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     private void modifyHost(HostView newHost, Node oldHost) {
@@ -227,12 +314,12 @@ public class XMLProcessor {
         }
         Element e = (Element) oldHost;
         e.setAttribute("id", newHost.getmId());
-        e.setAttribute("power", String.valueOf(newHost.getPower()));
-        e.setAttribute("state", newHost.getState());
-        e.setAttribute("availability", String.valueOf(newHost.getAvailability()));
-        e.setAttribute("pstate", String.valueOf(newHost.getPstate()));
-        e.setAttribute("core", String.valueOf(newHost.getCore()));
-        e.setAttribute("coordinates", String.valueOf(newHost.getCoordinates()));
+        e.setAttribute("spped", String.valueOf(newHost.getPower()));
+//        e.setAttribute("state", newHost.getState());
+//        e.setAttribute("availability", String.valueOf(newHost.getAvailability()));
+//        e.setAttribute("pstate", String.valueOf(newHost.getPstate()));
+//        e.setAttribute("core", String.valueOf(newHost.getCore()));
+//        e.setAttribute("coordinates", String.valueOf(newHost.getCoordinates()));
 
         if (reParse) {
             parse();
@@ -241,20 +328,23 @@ public class XMLProcessor {
     }
 
     public void addASXml(ASView as) {
+        Node n = doc.getElementsByTagName("platform").item(0);
+        if (n == null)
+            System.out.println("null");
+        else
+            n.appendChild(buildNodeFromASView(doc, as));
+//        appendChild();
+//        doc.getDocumentElement().
 
-        doc.getDocumentElement().appendChild(buildNodeFromASView(doc, as));
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
 
     }
 
-    private Node buildNodeFromASView(Document d, ASView h) {
+    private Node buildNodeFromASView(Document d, ASView as) {
         Node n = d.createElement("AS");
         Element e = (Element) n;
-        e.setAttribute("id", h.getmId());
+        e.setAttribute("id", as.getmId());
+        e.setAttribute("routing", "Dijkstra");
         return n;
     }
 
@@ -277,11 +367,8 @@ public class XMLProcessor {
             doc.getDocumentElement().removeChild(rmv);
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void removeRouteXml(RouteView rv) {
@@ -303,11 +390,8 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void removeRouteRoomXml(RouteViewRoom rv) {
@@ -329,11 +413,8 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void addRouterXml(ASView as, RouterView rv) {
@@ -353,12 +434,9 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            // write the content on file
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // write the content on file
+        saveXml(inputFile);
+
     }
 
     private Node buildNodeFromRouterView(Document d, RouterView rv) {
@@ -387,11 +465,8 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void modifyRouterXml(RouterView newRouter, String oldId) {
@@ -426,11 +501,8 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void addRouteXml(ASView as, RouteView rv) {
@@ -450,12 +522,9 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            // write the content on file
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // write the content on file
+        saveXml(inputFile);
+
     }
 
     public void addRouteRoomXml(ASView as, RouteViewRoom rv) {
@@ -475,12 +544,9 @@ public class XMLProcessor {
             }
         }
 
-        try {
-            // write the content on file
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // write the content on file
+        saveXml(inputFile);
+
     }
 
     private void buildNodeAndAppendNodeFromRouteView(Document d, RouteView rv, Element asEle) {
@@ -488,7 +554,7 @@ public class XMLProcessor {
         Element e = (Element) n;
         e.setAttribute("src", rv.getSrc());
         e.setAttribute("dst", rv.getDes());
-        e.setAttribute("symmetry", "yes");
+//        e.setAttribute("symmetry", "yes");
         asEle.appendChild(e);
 
         if (rv.getLinks().size() > 0) {
@@ -498,8 +564,8 @@ public class XMLProcessor {
                 lnNew.setAttribute("id", link.getmId());
                 lnNew.setAttribute("bandwidth", String.valueOf(link.getBandwidth()));
                 lnNew.setAttribute("latency", String.valueOf(link.getLatency()));
-                lnNew.setAttribute("state", link.getState());
-                lnNew.setAttribute("sharing_policy", link.getSharingPolicy());
+//                lnNew.setAttribute("state", link.getState());
+//                lnNew.setAttribute("sharing_policy", link.getSharingPolicy());
                 asEle.appendChild(lnNew);
             }
 
@@ -514,10 +580,10 @@ public class XMLProcessor {
             Node newNode = d.createElement("link");
             Element lnNew = (Element) newNode;
             lnNew.setAttribute("id", "link" + id);
-            lnNew.setAttribute("bandwidth", "" + 100);
+            lnNew.setAttribute("bandwidth", "" + 1250000000);
             lnNew.setAttribute("latency", String.valueOf(0));
-            lnNew.setAttribute("state", "ON");
-            lnNew.setAttribute("sharing_policy", "");
+//            lnNew.setAttribute("state", "ON");
+//            lnNew.setAttribute("sharing_policy", "");
             asEle.appendChild(lnNew);
 
             Node l = d.createElement("link_ctn");
@@ -758,11 +824,11 @@ public class XMLProcessor {
 
                 Element eleHost = (Element) hosts.item(i);
                 String hostId = eleHost.getAttribute("id");
-                int hostPower = eleHost.getAttribute("power").isEmpty() ? 0 : Integer.parseInt(eleHost.getAttribute("power"));
+                int hostPower = eleHost.getAttribute("speed").isEmpty() ? 1000000000 : Integer.parseInt(eleHost.getAttribute("speed"));
                 int hostCoord = eleHost.getAttribute("coordinates").isEmpty() ? 0 : Integer.parseInt(eleHost.getAttribute("coordinates"));
                 double hostPstate = eleHost.getAttribute("pstate").isEmpty() ? 0.0 : Double.parseDouble(eleHost.getAttribute("pstate"));
                 double hostAvailability = eleHost.getAttribute("availability").isEmpty() ? 0.0 : Double.parseDouble(eleHost.getAttribute("availability"));
-                int hostCore = eleHost.getAttribute("core").isEmpty() ? 0 : Integer.parseInt(eleHost.getAttribute("core"));
+                int hostCore = eleHost.getAttribute("core").isEmpty() ? 1 : Integer.parseInt(eleHost.getAttribute("core"));
                 String hostState = eleHost.getAttribute("state");
                 HostView host = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                         hostId, hostPower, hostState, hostPstate, hostAvailability, hostCore, hostCoord);
@@ -784,14 +850,20 @@ public class XMLProcessor {
         if (!forCluster) {
             doc.getDocumentElement().appendChild(as);
         }
-        RouterView rv = new RouterView(new Image(new File("src/graphicaleditor/res/router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
-                "main_router");
-        Node router = (Node) buildNodeFromRouterView(doc,
-                rv);
+//        RouterView rv = new RouterView(new Image(new File("src/graphicaleditor/res/router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
+//                "main_router");
+HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), "main_router",
+                    power,
+                    "ON",
+                    0,
+                    1.0,
+                    1,
+                    0);
+        Node h = (Node) buildNodeFromHostView(doc, hv);
         if (forCluster) {
-            asView.getRouterList().add(rv);
+            asView.getHostList().add(hv);
         } else {
-            as.appendChild(router);
+            as.appendChild(h);
         }
         for (int i = 0; i < numOfHost; i++) {
             HostView hostview = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), prefix + i + suffix,
@@ -826,11 +898,9 @@ public class XMLProcessor {
         }
 
         if (!forCluster) {
-            try {
-                saveXml(inputFile);
-            } catch (TransformerException ex) {
-                Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
+            saveXml(inputFile);
+
         }
 
     }
@@ -838,13 +908,14 @@ public class XMLProcessor {
     public void generateRingTopo(String asId, int numOfHost) {
         Element as = doc.createElement("AS");
         as.setAttribute("id", asId);
+        as.setAttribute("routing", "Dijkstra");
         doc.getDocumentElement().appendChild(as);
 
         for (int i = 0; i < numOfHost; i++) {
             Node host = buildNodeFromHostView(doc,
                     new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                             "host" + i,
-                            100,
+                            1000000000,
                             "ON",
                             0,
                             1.0,
@@ -856,7 +927,7 @@ public class XMLProcessor {
 
         for (int i = 0; i < numOfHost; i++) {
             ArrayList<LinkView> links = new ArrayList<>();
-            links.add(new LinkView("link" + i, 100, 0, "ON", ""));
+            links.add(new LinkView("link" + i, 1250000000, 0, "ON", "SHARED"));
             RouteView rv = new RouteView("host" + i, "host" + (i + 1) % numOfHost, links);
             buildNodeAndAppendNodeFromRouteView(doc,
                     rv, as);
@@ -864,16 +935,14 @@ public class XMLProcessor {
 //            buildNodeFromRouteViewStep2(doc, rv, (Element) route);
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void generateTorusTopo(String asId, int x, int y, int z) {
         Element as = doc.createElement("AS");
         as.setAttribute("id", asId);
+        as.setAttribute("routing", "Dijkstra");
         doc.getDocumentElement().appendChild(as);
 
         // gen host
@@ -882,16 +951,14 @@ public class XMLProcessor {
         // gen routes
         genRoute(as, x, y, z);
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     public void generateMeshTopo(String asId, int x, int y, int z) {
         Element as = doc.createElement("AS");
         as.setAttribute("id", asId);
+        as.setAttribute("routing", "Dijkstra");
         doc.getDocumentElement().appendChild(as);
 
         // gen torus
@@ -901,11 +968,8 @@ public class XMLProcessor {
         // remove redundant from torus
         rmvRedundantRoute(as, x, y, z);
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
     private void rmvRedundantRoute(Element as, int x, int y, int z) {
@@ -962,7 +1026,7 @@ public class XMLProcessor {
                     Node host = buildNodeFromHostView(doc,
                             new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
                                     "host" + i + "" + j + "" + k,
-                                    100,
+                                    1000000000,
                                     "ON",
                                     0,
                                     1.0,
@@ -986,7 +1050,7 @@ public class XMLProcessor {
 
                     for (k = 0; k < z; k++) {
                         ArrayList<LinkView> links = new ArrayList<>();
-                        links.add(new LinkView("link" + m, 100, 0, "ON", ""));
+                        links.add(new LinkView("link" + m, 1250000000, 0, "ON", ""));
                         buildNodeAndAppendNodeFromRouteView(doc,
                                 new RouteView("host" + i + "" + j + "" + k, "host" + i + "" + j + "" + ((k + 1) % z), links), as);
                         m++;
@@ -1001,7 +1065,7 @@ public class XMLProcessor {
 
 //                    for (k = 0; k < z; k++) {
                     ArrayList<LinkView> links = new ArrayList<>();
-                    links.add(new LinkView("link" + m, 100, 0, "ON", ""));
+                    links.add(new LinkView("link" + m, 1250000000, 0, "ON", ""));
                     buildNodeAndAppendNodeFromRouteView(doc,
                             new RouteView("host" + i + "" + j + "0", "host" + i + "" + j + "1", links), as);
                     m++;
@@ -1017,7 +1081,7 @@ public class XMLProcessor {
                 for (k = 0; k < z; k++) {
                     for (j = 0; j < y; j++) {
                         ArrayList<LinkView> links = new ArrayList<>();
-                        links.add(new LinkView("link" + m, 100, 0, "ON", ""));
+                        links.add(new LinkView("link" + m, 1250000000, 0, "ON", ""));
                         buildNodeAndAppendNodeFromRouteView(doc,
                                 new RouteView("host" + i + "" + j + "" + k, "host" + i + "" + ((j + 1) % y) + "" + k, links), as);
                         m++;
@@ -1030,7 +1094,7 @@ public class XMLProcessor {
                 for (k = 0; k < z; k++) {
 //                    for (j = 0; j < y; j++) {
                     ArrayList<LinkView> links = new ArrayList<>();
-                    links.add(new LinkView("link" + m, 100, 0, "ON", ""));
+                    links.add(new LinkView("link" + m, 1250000000, 0, "ON", ""));
                     buildNodeAndAppendNodeFromRouteView(doc,
                             new RouteView("host" + i + "0" + "" + k, "host" + i + "1" + "" + k, links), as);
                     m++;
@@ -1045,7 +1109,7 @@ public class XMLProcessor {
                 for (k = 0; k < z; k++) {
                     for (i = 0; i < x; i++) {
                         ArrayList<LinkView> links = new ArrayList<>();
-                        links.add(new LinkView("link" + m, 100, 0, "ON", ""));
+                        links.add(new LinkView("link" + m, 1250000000, 0, "ON", ""));
                         buildNodeAndAppendNodeFromRouteView(doc,
                                 new RouteView("host" + i + "" + j + "" + k, "host" + ((i + 1) % x) + "" + j + "" + k, links), as);
                         m++;
@@ -1058,7 +1122,7 @@ public class XMLProcessor {
                 for (k = 0; k < z; k++) {
 //                    for (i = 0; i < x; i++) {
                     ArrayList<LinkView> links = new ArrayList<>();
-                    links.add(new LinkView("link" + m, 100, 0, "ON", ""));
+                    links.add(new LinkView("link" + m, 1250000000, 0, "ON", ""));
                     buildNodeAndAppendNodeFromRouteView(doc,
                             new RouteView("host" + "0" + "" + j + "" + k, "host" + "1" + "" + j + "" + k, links), as);
                     m++;
@@ -1071,61 +1135,41 @@ public class XMLProcessor {
 
     //////////////////////////////////////////////////////////////
     // for Benchmarking
-    private void genHimenoBM(int numprocs) {
+    private void genHimenoBM(int numprocs, String himenoClass) {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "himeno");
         hmn.setAttribute("numprocs", String.valueOf(numprocs));
-//        Element n = doc.createElement("numprocs");
-//        n.setAttribute("value", String.valueOf(numprocs));
-//        hmn.appendChild(n);
+        hmn.setAttribute("class", himenoClass);
 
         doc.getDocumentElement().appendChild(hmn);
 
     }
 
-    public void genBM(boolean useHimeno, boolean useGraph500, boolean useNAS, int HimenoNumprocs,
-            int graph500Numprocs, int scale, int edgeFactor, int engine,
+    public void genBM(boolean useHimeno, boolean useGraph500, boolean useNAS, int HimenoNumprocs, String himenoClass,
+            int graph500Numprocs, int scale,
             String kernel, String klass, int NASNumprocs) {
         if (useHimeno) {
-            genHimenoBM(HimenoNumprocs);
+            genHimenoBM(HimenoNumprocs, himenoClass);
         }
 
         if (useGraph500) {
-            genGraph500BM(graph500Numprocs, scale, edgeFactor, engine);
+            genGraph500BM(graph500Numprocs, scale);
         }
 
         if (useNAS) {
             genNASBM(kernel, klass, NASNumprocs);
         }
 
-        try {
-            saveXml(inputFile);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveXml(inputFile);
+
     }
 
-    private void genGraph500BM(int numprocs, int scale, int edgeFactor, int engine) {
+    private void genGraph500BM(int numprocs, int scale) {
         Element hmn = doc.createElement("benchmark");
         hmn.setAttribute("type", "graph500");
         hmn.setAttribute("numprocs", String.valueOf(numprocs));
         hmn.setAttribute("scale", String.valueOf(scale));
-        hmn.setAttribute("engine", String.valueOf(engine));
-        
         doc.getDocumentElement().appendChild(hmn);
-
-//        Element num = doc.createElement("numprocs");
-//        num.setAttribute("value", String.valueOf(numprocs));
-//        Element sc = doc.createElement("scale");
-//        sc.setAttribute("value", String.valueOf(scale));
-//        Element edge = doc.createElement("edgefactor");
-//        edge.setAttribute("value", String.valueOf(edgeFactor));
-//        Element eng = doc.createElement("engine");
-//        eng.setAttribute("value", String.valueOf(engine));
-//        hmn.appendChild(num);
-//        hmn.appendChild(sc);
-//        hmn.appendChild(edge);
-//        hmn.appendChild(eng);
 
     }
 
@@ -1136,17 +1180,6 @@ public class XMLProcessor {
         hmn.setAttribute("class", klass);
         hmn.setAttribute("numprocs", String.valueOf(numprocs));
         doc.getDocumentElement().appendChild(hmn);
-
-//        Element ker = doc.createElement("kernel");
-//        ker.setAttribute("value", String.valueOf(kernel));
-//        Element kl = doc.createElement("class");
-//        kl.setAttribute("value", String.valueOf(klass));
-//        Element num = doc.createElement("numprocs");
-//        num.setAttribute("value", String.valueOf(numprocs));
-//
-//        hmn.appendChild(ker);
-//        ker.appendChild(kl);
-//        ker.appendChild(num);
 
     }
 

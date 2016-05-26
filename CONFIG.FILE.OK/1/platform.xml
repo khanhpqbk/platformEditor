@@ -1,0 +1,86 @@
+<?xml version='1.0'?>
+<!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd">
+<platform version="4">
+   <AS id="efd" routing="Dijkstra">
+      <host id="host0" speed="1000000000"/>
+      <host id="host1" speed="1000000000"/>
+      <host id="host2" speed="1000000000"/>
+      <host id="host3" speed="1000000000"/>
+      <host id="host4" speed="1000000000"/>
+      <host id="host5" speed="1000000000"/>
+      <host id="host6" speed="1000000000"/>
+      <host id="host7" speed="1000000000"/>
+      <host id="host8" speed="1000000000"/>
+      <host id="host9" speed="1000000000"/>
+      <host id="host10" speed="1000000000"/>
+      <host id="host11" speed="1000000000"/>
+      <host id="host12" speed="1000000000"/>
+      <host id="host13" speed="1000000000"/>
+      <host id="host14" speed="1000000000"/>
+      <host id="host15" speed="1000000000"/>
+      <link bandwidth="1250000000" id="link0" latency="0.0"/>
+      <link bandwidth="1250000000" id="link1" latency="0.0"/>
+      <link bandwidth="1250000000" id="link2" latency="0.0"/>
+      <link bandwidth="1250000000" id="link3" latency="0.0"/>
+      <link bandwidth="1250000000" id="link4" latency="0.0"/>
+      <link bandwidth="1250000000" id="link5" latency="0.0"/>
+      <link bandwidth="1250000000" id="link6" latency="0.0"/>
+      <link bandwidth="1250000000" id="link7" latency="0.0"/>
+      <link bandwidth="1250000000" id="link8" latency="0.0"/>
+      <link bandwidth="1250000000" id="link9" latency="0.0"/>
+      <link bandwidth="1250000000" id="link10" latency="0.0"/>
+      <link bandwidth="1250000000" id="link11" latency="0.0"/>
+      <link bandwidth="1250000000" id="link12" latency="0.0"/>
+      <link bandwidth="1250000000" id="link13" latency="0.0"/>
+      <link bandwidth="1250000000" id="link14" latency="0.0"/>
+      <link bandwidth="1250000000" id="link15" latency="0.0"/>
+      <route dst="host1" src="host0">
+         <link_ctn id="link0"/>
+      </route>
+      <route dst="host2" src="host1">
+         <link_ctn id="link1"/>
+      </route>
+      <route dst="host3" src="host2">
+         <link_ctn id="link2"/>
+      </route>
+      <route dst="host4" src="host3">
+         <link_ctn id="link3"/>
+      </route>
+      <route dst="host5" src="host4">
+         <link_ctn id="link4"/>
+      </route>
+      <route dst="host6" src="host5">
+         <link_ctn id="link5"/>
+      </route>
+      <route dst="host7" src="host6">
+         <link_ctn id="link6"/>
+      </route>
+      <route dst="host8" src="host7">
+         <link_ctn id="link7"/>
+      </route>
+      <route dst="host9" src="host8">
+         <link_ctn id="link8"/>
+      </route>
+      <route dst="host10" src="host9">
+         <link_ctn id="link9"/>
+      </route>
+      <route dst="host11" src="host10">
+         <link_ctn id="link10"/>
+      </route>
+      <route dst="host12" src="host11">
+         <link_ctn id="link11"/>
+      </route>
+      <route dst="host13" src="host12">
+         <link_ctn id="link12"/>
+      </route>
+      <route dst="host14" src="host13">
+         <link_ctn id="link13"/>
+      </route>
+      <route dst="host15" src="host14">
+         <link_ctn id="link14"/>
+      </route>
+      <route dst="host0" src="host15">
+         <link_ctn id="link15"/>
+      </route>
+   </AS>
+</platform>

@@ -17,7 +17,7 @@ import javafx.scene.control.Button;
  *
  * @author KHANH
  */
-public abstract class AbstractDialogController implements Initializable {
+public abstract class AbstractDialogController extends Controller {
     protected FXMLDocumentController parentController;
     
     @FXML
