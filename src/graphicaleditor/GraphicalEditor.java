@@ -22,7 +22,7 @@ public class GraphicalEditor extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("view/FXMLDocument.fxml"));
         
-        Scene scene = new Scene(root, 1000, 700);
+        Scene scene = new Scene(root, 1200, 700);
         
         stage.setTitle("Graphical Editor");
         stage.setScene(scene);

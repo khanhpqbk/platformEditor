@@ -2,73 +2,264 @@
 
 <?import java.lang.*?>
 <?import java.util.*?>
+<?import javafx.collections.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="390.0" prefWidth="790.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.GraphicalModeController">
+<AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="515.0" prefWidth="915.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="graphicaleditor.controller.GraphicalModeController">
   <children>
-    <GridPane fx:id="gridPane" layoutX="704.0" layoutY="14.0" prefHeight="396.0" prefWidth="79.0">
+    <AnchorPane id="gridPane" prefHeight="515.0" prefWidth="915.0" style="-fx-background-fill: black, white ;&#10;-fx-background-insets: 0, 1 ;&#10;-fx-border-color: black;" styleClass="styleGraphicalMode" visible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-        <GridPane id="GridPane" GridPane.columnIndex="1" GridPane.rowIndex="0">
-          <children>
-            <Label prefHeight="20.0" prefWidth="95.0" text="AS" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-          </children>
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-          </rowConstraints>
-        </GridPane>
-        <GridPane id="GridPane" GridPane.columnIndex="1" GridPane.rowIndex="1">
-          <children>
-            <Label prefWidth="95.0" text="Host" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-          </children>
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-          </rowConstraints>
-        </GridPane>
-        <ImageView fx:id="asView" fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
-          <image>
-            <Image url="@../res/as.jpg" />
-          </image>
-        </ImageView>
-        <ImageView fx:id="hostView" fitHeight="24.0" fitWidth="31.99999910242417" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="1">
-          <image>
-            <Image url="@../res/host.jpg" />
-          </image>
-        </ImageView>
-        <ImageView fitHeight="16.0" fitWidth="21.333333333333332" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="2">
-          <image>
-            <Image url="@../res/router.jpg" />
-          </image>
-        </ImageView>
-        <Label prefWidth="51.0" text="Router" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <ImageView fitHeight="19.999900000002526" fitWidth="26.666532697557003" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="3">
-          <image>
-            <Image url="@../res/route.png" />
-          </image>
-        </ImageView>
-        <Label text="Route" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <BorderPane fx:id="hostFilePane" prefHeight="221.0" prefWidth="245.0" style="-fx-border-color: black;" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+          <center>
+            <ListView fx:id="listView" orientation="VERTICAL" prefHeight="188.0" prefWidth="242.0" style="-fx-border-color: black;" />
+          </center>
+          <top>
+            <Label prefHeight="31.0" prefWidth="152.0" text="Host File " underline="false" wrapText="false">
+              <font>
+                <Font name="System Bold" size="14.0" fx:id="x1" />
+              </font>
+            </Label>
+          </top>
+        </BorderPane>
+        <BorderPane fx:id="bmPane" prefHeight="331.0" prefWidth="242.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="19.0" AnchorPane.rightAnchor="16.0">
+          <center>
+            <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="NAS">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                        <GridPane prefHeight="279.0" prefWidth="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <children>
+                            <CheckBox id="nasCb" fx:id="useNAS" mnemonicParsing="false" text="Use NAS" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <Label prefWidth="77.0" text="Kernel" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <Label prefWidth="210.0" text="Class" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                            <ComboBox fx:id="kernel" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="bt" />
+                                  <String fx:value="cg" />
+                                  <String fx:value="ep" />
+                                  <String fx:value="is" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <ComboBox fx:id="klass" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="S" />
+                                  <String fx:value="A" />
+                                  <String fx:value="B" />
+                                  <String fx:value="C" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <ComboBox fx:id="NASNumprocs" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="1" />
+                                  <String fx:value="2" />
+                                  <String fx:value="4" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                          </children>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="143.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="97.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="Himeno">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                        <GridPane prefHeight="279.0" prefWidth="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <children>
+                            <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <CheckBox fx:id="useHimeno" mnemonicParsing="false" prefWidth="172.0" text="Use Himeno" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <ComboBox id="kernel" fx:id="himenoNumprocs" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <Integer fx:value="1" />
+                                  <Integer fx:value="2" />
+                                  <Integer fx:value="4" />
+                                  <Integer fx:value="8" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <Label prefWidth="79.0" text="Class" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <ComboBox id="kernel" fx:id="himenoClass" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="SSMALL" />
+                                  <String fx:value="SMALL" />
+                                  <String fx:value="MID" />
+                                  <String fx:value="BIG" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                          </children>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab  text="Graph500">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                        <GridPane prefHeight="279.0" prefWidth="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <children>
+                            <Label prefWidth="210.0" text="Number of processors" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <Label prefWidth="210.0" text="Scale" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                            <ComboBox id="kernel" fx:id="scale" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <Integer fx:value="1" />
+                                  <Integer fx:value="2" />
+                                  <Integer fx:value="3" />
+                                  <Integer fx:value="4" />
+                                  <Integer fx:value="5" />
+                                  <Integer fx:value="6" />
+                                  <Integer fx:value="7" />
+                                  <Integer fx:value="8" />
+                                  <Integer fx:value="9" />
+                                  <Integer fx:value="10" />
+                                  <Integer fx:value="11" />
+                                  <Integer fx:value="12" />
+                                  <Integer fx:value="13" />
+                                  <Integer fx:value="14" />
+                                  <Integer fx:value="15" />
+                                  <Integer fx:value="16" />
+                                  <Integer fx:value="17" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <ComboBox id="kernel" fx:id="graph500Numprocs" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                  <Integer fx:value="1" />
+                                  <Integer fx:value="2" />
+                                  <Integer fx:value="4" />
+                                  <Integer fx:value="8" />
+                                </FXCollections>
+                              </items>
+                            </ComboBox>
+                            <CheckBox fx:id="useGraph500" id="useGraph500" mnemonicParsing="false" text="Use graph500" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                          </children>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
+                      </children>
+                    </AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+          </center>
+          <top>
+            <Label font="$x1" text="Benchmark Usage" />
+          </top>
+        </BorderPane>
+        <AnchorPane id="anchordPane" fx:id="anchorPane" prefHeight="492.0" prefWidth="671.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="0.0" />
+        <TitledPane animated="false" layoutX="11.0" layoutY="11.0" minWidth="81.0" prefHeight="221.0" prefWidth="81.0" text="Pallete">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <GridPane fx:id="gridPane" alignment="CENTER" disable="false" focusTraversable="false" gridLinesVisible="false" mouseTransparent="false" prefHeight="195.0" prefWidth="89.0" style="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-12.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                    <GridPane id="GridPane" visible="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                      <children>
+                        <Label prefHeight="20.0" prefWidth="95.0" text="AS" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                    <GridPane id="GridPane" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                      <children>
+                        <Label prefWidth="95.0" text="Host" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                    <ImageView id="asView" fitHeight="24.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                      <image>
+                        <Image url="@../res/as.jpg" />
+                      </image>
+                    </ImageView>
+                    <ImageView id="hostView" fitHeight="24.0" fitWidth="31.99999910242417" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                      <image>
+                        <Image url="@../res/host.jpg" />
+                      </image>
+                    </ImageView>
+                    <ImageView fitHeight="16.0" fitWidth="21.333333333333332" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                      <image>
+                        <Image url="@../res/router.jpg" />
+                      </image>
+                    </ImageView>
+                    <Label prefWidth="51.0" text="Router" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <ImageView fitHeight="19.999900000002526" fitWidth="26.666532697557003" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                      <image>
+                        <Image url="@../res/route.png" />
+                      </image>
+                    </ImageView>
+                    <Label text="Route" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  </children>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="31.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="56.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                </GridPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </TitledPane>
       </children>
-      <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="52.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="60.0" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      </rowConstraints>
-    </GridPane>
-    <AnchorPane fx:id="anchorPane" layoutX="14.0" layoutY="14.0" prefHeight="410.0" prefWidth="562.0" />
+    </AnchorPane>
   </children>
 </AnchorPane>

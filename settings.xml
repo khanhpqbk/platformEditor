@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<simulation>
-   <benchmark class="SMALL" numprocs="4" type="himeno"/>
-</simulation>

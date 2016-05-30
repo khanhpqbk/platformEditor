@@ -12,8 +12,10 @@ import graphicaleditor.model.HostView;
 import graphicaleditor.model.RouteView;
 import graphicaleditor.model.RouteViewRoom;
 import graphicaleditor.model.RouterView;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -28,9 +30,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
@@ -51,6 +64,8 @@ public class TextModeController implements Initializable {
     public void setParentController(FXMLDocumentController c) {
         this.parentController = c;
     }
+
+    private boolean start = false;
 
     public void clearText() {
         textAreaTextMode.clear();
@@ -125,39 +140,37 @@ public class TextModeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        init();
+    }
+
+    private void init() {
 
     }
 
     @SuppressWarnings(
             "NestedAssignment")
-    public void loadFileToTextEditor(String fileName) {
-
-        Future<List<String>> future;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        TextFileProcessor reader = new TextFileProcessor();
-
-        future = executorService.submit(new Callable<List<String>>() {
-            public List<String> call() throws Exception {
-                return reader.read(new File(fileName));
-            }
-        });
+    public void loadTextModeAndHostFilePane(String fileName) {
 
         List<String> lines = new ArrayList<>();
-        try {
-            lines = future.get();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ExecutionException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // process the line.
+                lines.add(line);
+            }
+        } catch (IOException e) {
 
-        executorService.shutdownNow();
+        }
         textAreaTextMode.clear();
+        parentController.getGraphicalModeController().renderHostFilePane();
+        
         for (String line : lines) {
             textAreaTextMode.appendText(line + "\n");
         }
 
     }
+    
+    
 
     public File saveFileFromTextEditor(String fileName) {
         File file = new File(fileName);
@@ -179,8 +192,10 @@ public class TextModeController implements Initializable {
 //                System.out.println(line);
             }
             bw.close();
+
         } catch (IOException ex) {
-            Logger.getLogger(TextModeController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TextModeController.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
 //        StringTokenizer tokenizer = new StringTokenizer(text);

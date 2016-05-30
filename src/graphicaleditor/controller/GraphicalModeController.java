@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -36,8 +37,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -49,13 +52,16 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -68,11 +74,63 @@ public class GraphicalModeController implements Initializable {
     public static final int VIEW_RANGE = 400;
     public static final int VIEW_SIZE = 40;
 
+    boolean changeKernel = false;
+    boolean changeClass = false;
+    
+    @FXML
+    private CheckBox useHimeno;
+
+    @FXML
+    private CheckBox useNAS;
+
+    @FXML
+    private CheckBox useGraph500;
+
+    @FXML
+    private ComboBox<Integer> himenoNumprocs;
+    
+    @FXML
+    private ComboBox<String> himenoClass;
+
+    @FXML
+    private ComboBox<Integer> graph500Numprocs;
+
+    @FXML
+    private ComboBox<Integer> scale;
+
+//    @FXML
+//    private TextField edgeFactor;
+//
+//    @FXML
+//    private TextField engine;
+
+    @FXML
+    private ComboBox<String> kernel;
+
+    @FXML
+    private ComboBox<String> klass;
+
+    @FXML
+    private ComboBox<Integer> NASNumprocs;
+    
+    private boolean openFirstTime = false;
+    
+    
+
     @FXML
     private AnchorPane anchorPane;
 
     @FXML
     private GridPane gridPane;
+
+    @FXML
+    private BorderPane hostFilePane;
+
+    @FXML
+    private BorderPane bmPane;
+
+    @FXML
+    private ListView listView;
 
     @FXML
     private List<ImageView> imageViews = new ArrayList<>();
@@ -109,17 +167,17 @@ public class GraphicalModeController implements Initializable {
     public void renderOutsideView(XMLProcessor parser) {
         clearView();
         for (ASView as : parser.getAsList()) {
-            this.addASView(as, r.nextInt(VIEW_RANGE), r.nextInt(VIEW_RANGE));
+            this.addASView(as, r.nextInt(VIEW_RANGE) + 100, r.nextInt(VIEW_RANGE) + 100);
         }
     }
 
     public void renderInsideView(ASView as) {
         for (HostView h : as.getHostList()) {
-            this.addHostViewOrRouterView(h, r.nextInt(VIEW_RANGE), r.nextInt(VIEW_RANGE));
+            this.addHostViewOrRouterView(h, r.nextInt(VIEW_RANGE) + 100, r.nextInt(VIEW_RANGE) + 100);
         }
 
         for (RouterView rv : as.getRouterList()) {
-            this.addHostViewOrRouterView(rv, r.nextInt(VIEW_RANGE), r.nextInt(VIEW_RANGE));
+            this.addHostViewOrRouterView(rv, r.nextInt(VIEW_RANGE) + 100, r.nextInt(VIEW_RANGE) + 100);
         }
 
         if (!roomMode) {
@@ -136,6 +194,59 @@ public class GraphicalModeController implements Initializable {
             }
         }
 
+    }
+
+    private CheckBox cb = null;
+
+    private void setListView() {
+
+        if (asNow == null) {
+            XMLProcessor p = new XMLProcessor(parentController.getSelectedFile().getAbsolutePath());
+            p.parse();
+            asNow = p.getAsList().get(0);
+        }
+//        ArrayLinkedList<String> ll = new ArrayLinkedList<>();
+        listView.setItems(FXCollections.observableArrayList(asNow.getHostList()));
+        listView.setCellFactory(new Callback<ListView<HostView>, ListCell<HostView>>() {
+            @Override
+            public ListCell<HostView> call(ListView<HostView> list) {
+                return new ColorRectCell();
+            }
+        }
+        );
+    }
+
+    class ColorRectCell extends ListCell<HostView> {
+
+        @Override
+        public void updateItem(HostView item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null) {
+                cb = new CheckBox();
+
+                cb.setSelected(item.isSelected());
+                Label lbl = new Label(item.getmId());
+                HBox rect = new HBox(cb, lbl);
+                setGraphic(rect);
+
+                cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        item.setSelected(newValue);
+//                        System.out.println("host " + newValue);
+                    }
+                });
+            }
+        }
+    }
+
+    public void renderHostFilePane() {
+        setListView();
+    }
+
+    public void renderBMPane() {
+        System.out.println("render bm pane");
     }
 
     public void clearLines() {
@@ -163,6 +274,17 @@ public class GraphicalModeController implements Initializable {
 
     public void clearView() {
         anchorPane.getChildren().clear();
+//        int size = anchorPane.getChildren().size();
+//        Iterator<Node> i = anchorPane.getChildren().iterator();
+//        while (i.hasNext()) {
+//            Node node = i.next();
+//            if (node instanceof ImageView) {
+//                i.remove();
+//            }
+//            if(node instanceof Line) {
+//                i.remove();
+//            }
+//        }
         plgs.clear();
     }
 
@@ -239,7 +361,7 @@ public class GraphicalModeController implements Initializable {
                                     anchorPane.getChildren().remove(rv);
                                     asNow.getRouteList().remove(rv);
                                     parentController.getTextModeController().removeRouteXml(rv);
-                                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                                    parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
                                 }
                             });
 
@@ -343,7 +465,7 @@ public class GraphicalModeController implements Initializable {
                                     }
 
                                     parentController.getTextModeController().removeRouteRoomXml(rv);
-                                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                                    parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
                                 }
                             });
 
@@ -450,7 +572,7 @@ public class GraphicalModeController implements Initializable {
                             System.out.println("delete AS...");
                             anchorPane.getChildren().remove(view);
                             parentController.getTextModeController().removeASXml((ASView) view);
-                            parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                            parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
                         });
 
                         contextMenu.show(anchorPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -597,12 +719,12 @@ public class GraphicalModeController implements Initializable {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                         HostFileController c = parentController.getHostFileController();
-                        if (c != null && c.getListView() != null) {
+                        if (listView != null) {
 //                            c.getListView();
-                            forceListRefreshOn(c.getListView());
+                            setListView();
+                            forceListRefreshOn(listView);
                         }
-                        
-                        
+
                     }
                 });
             }
@@ -655,7 +777,7 @@ public class GraphicalModeController implements Initializable {
             asNow.getRouteRoomList().add(routeViewRoomToAdd);
             asNow.getLinkList().addAll(routeViewToAdd.getLinks());
             parentController.getTextModeController().addRouteXml(asNow, routeViewToAdd);
-            parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+            parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
 
             addRoute = 0; // finish add route
             routeViewToAdd = null;
@@ -682,12 +804,12 @@ public class GraphicalModeController implements Initializable {
                 asNow.getRouterList().remove(view);
                 rmvRoute(view);
                 parentController.getTextModeController().removeRouterXml(router);
-                parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
             });
 
         } else if (view instanceof HostView) {
             HostView h = (HostView) view;
-            String text = h.isSelected() ? "Unmark": "Mark for benchmarking"; 
+            String text = h.isSelected() ? "Unmark" : "Mark for benchmarking";
             markForBM = new MenuItem(text);
             contextMenu.getItems().add(markForBM);
             markForBM.setOnAction((ActionEvent event) -> {
@@ -699,13 +821,10 @@ public class GraphicalModeController implements Initializable {
                 asNow.getHostList().remove(view);
                 rmvRoute(view);
                 parentController.getTextModeController().removeHostXml(asNow, h);
-                parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
             });
- 
 
         }
-        
-        
 
         contextMenu.show(anchorPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
     }
@@ -748,7 +867,7 @@ public class GraphicalModeController implements Initializable {
 
                     FXMLDocumentController c = (FXMLDocumentController) parentController;
                     ((TextModeController) c.getTextModeController()).addASXml(newAS);
-                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                    parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
                 } else {
                     System.out.println("cannot add AS here");
                 }
@@ -763,7 +882,7 @@ public class GraphicalModeController implements Initializable {
                     asNow.getHostList().add(h);
                     FXMLDocumentController c = (FXMLDocumentController) parentController;
                     ((TextModeController) c.getTextModeController()).addHostXml(asNow, h);
-                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                    parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
 
                 } else {
                     System.out.println("cannot add Host here");
@@ -779,7 +898,7 @@ public class GraphicalModeController implements Initializable {
                     addHostViewOrRouterView(r, event.getX(), event.getY());
                     asNow.getRouterList().add(r);
                     parentController.getTextModeController().addRouterXml(asNow, r);
-                    parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+                    parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
 
                 } else {
                     System.out.println("cannot add router here");
@@ -796,6 +915,8 @@ public class GraphicalModeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         isOutside = true;
         enablePalleteFunction();
+        renderBMPane();
+        initBMPane();
     }
 
     private void enablePalleteFunction() {
@@ -860,6 +981,115 @@ public class GraphicalModeController implements Initializable {
         Node node = gridPane.getChildren().get(3);
 
     }
+    
+    public void initBMPane() {
+        himenoNumprocs.setDisable(true);
+        himenoClass.setDisable(true);
+        graph500Numprocs.setDisable(true);
+//        edgeFactor.setDisable(true);
+        scale.setDisable(true);
+//        engine.setDisable(true);
+        NASNumprocs.setDisable(true);
+        kernel.setDisable(true);
+        klass.setDisable(true);
+
+        useHimeno.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                himenoNumprocs.setDisable(!newValue);
+                himenoClass.setDisable(!newValue);
+            }
+        });
+
+        useGraph500.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                graph500Numprocs.setDisable(!newValue);
+//                edgeFactor.setDisable(!newValue);
+                scale.setDisable(!newValue);
+//                engine.setDisable(!newValue);
+            }
+        });
+
+        useNAS.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                NASNumprocs.setDisable(!newValue);
+                kernel.setDisable(!newValue);
+                klass.setDisable(!newValue);
+            }
+        });
+
+        kernel.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                changeKernel = true;
+                if (changeClass) {
+                    setNumprocs();
+                }
+            }
+        }
+        );
+
+        klass.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                changeClass = true;
+                if (changeKernel) {
+                    setNumprocs();
+                }
+            }
+        }
+        );
+    }
+
+    private void setNumprocs() {
+        String kernelStr = kernel.getValue();
+        String klassStr
+                = klass.getValue();
+//        System.out.println(kernel + "___" + klass);
+        if (kernelStr.equals("bt")) {
+            if (klassStr.equals("S")) {
+                setMaxNumprocs(16, "bt");
+            } else {
+                setMaxNumprocs(121, "bt");
+            }
+        } else {
+            if (klassStr.equals("S")) {
+                setMaxNumprocs(16, "others");
+            } else {
+                setMaxNumprocs(128, "others");
+            }
+
+        }
+    }
+
+    private void setMaxNumprocs(int value, String kernel) {
+        Integer[] intsOther = new Integer[]{1, 2, 4, 8, 16, 32, 64, 128};
+        Integer[] intsBt = new Integer[]{1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121};
+        NASNumprocs.getItems().clear();
+        if (kernel.equals("bt")) {
+            for (int i = 0; i < 11; i++) {
+                if (intsBt[i] <= value) {
+                    NASNumprocs.getItems().add(intsBt[i]);
+                } else {
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < 8; i++) {
+                if (intsOther[i] <= value) {
+                    NASNumprocs.getItems().add(intsOther[i]);
+                } else {
+                    break;
+                }
+            }
+        }
+
+    }
 
     private void showRouteDetails(RouteView rv) {
         System.out.println("double click on Route View");
@@ -887,7 +1117,7 @@ public class GraphicalModeController implements Initializable {
             parentController.getTextModeController().modifyHostXml(newHost, h.getmId());
             saveRouteFromFields(asNow, newHost, h);
             saveHostFromFields(h, newHost);
-            parentController.getTextModeController().loadFileToTextEditor(parentController.getSelectedFile().getAbsolutePath());
+            parentController.getTextModeController().loadTextModeAndHostFilePane(parentController.getSelectedFile().getAbsolutePath());
         };
 
         parentController.showDialog(3, "host details", 500, 400, "hostdetail", handler, dialog, h);
@@ -1020,5 +1250,103 @@ public class GraphicalModeController implements Initializable {
     public void setPlgs(ArrayList<Polygon> plgs) {
         this.plgs = plgs;
     }
+
+    public boolean isOpenFirstTime() {
+        return openFirstTime;
+    }
+
+    public void setOpenFirstTime(boolean openFirstTime) {
+        this.openFirstTime = openFirstTime;
+    }
+
+    public CheckBox getUseHimeno() {
+        return useHimeno;
+    }
+
+    public void setUseHimeno(CheckBox useHimeno) {
+        this.useHimeno = useHimeno;
+    }
+
+    public CheckBox getUseNAS() {
+        return useNAS;
+    }
+
+    public void setUseNAS(CheckBox useNAS) {
+        this.useNAS = useNAS;
+    }
+
+    public CheckBox getUseGraph500() {
+        return useGraph500;
+    }
+
+    public void setUseGraph500(CheckBox useGraph500) {
+        this.useGraph500 = useGraph500;
+    }
+
+    public ComboBox<Integer> getHimenoNumprocs() {
+        return himenoNumprocs;
+    }
+
+    public void setHimenoNumprocs(ComboBox<Integer> himenoNumprocs) {
+        this.himenoNumprocs = himenoNumprocs;
+    }
+
+    public ComboBox<String> getHimenoClass() {
+        return himenoClass;
+    }
+
+    public void setHimenoClass(ComboBox<String> himenoClass) {
+        this.himenoClass = himenoClass;
+    }
+
+    public ComboBox<Integer> getGraph500Numprocs() {
+        return graph500Numprocs;
+    }
+
+    public void setGraph500Numprocs(ComboBox<Integer> graph500Numprocs) {
+        this.graph500Numprocs = graph500Numprocs;
+    }
+
+    public ComboBox<Integer> getScale() {
+        return scale;
+    }
+
+    public void setScale(ComboBox<Integer> scale) {
+        this.scale = scale;
+    }
+
+    public ComboBox<String> getKernel() {
+        return kernel;
+    }
+
+    public void setKernel(ComboBox<String> kernel) {
+        this.kernel = kernel;
+    }
+
+    public ComboBox<String> getKlass() {
+        return klass;
+    }
+
+    public void setKlass(ComboBox<String> klass) {
+        this.klass = klass;
+    }
+
+    public ComboBox<Integer> getNASNumprocs() {
+        return NASNumprocs;
+    }
+
+    public void setNASNumprocs(ComboBox<Integer> NASNumprocs) {
+        this.NASNumprocs = NASNumprocs;
+    }
+
+    public ListView getListView() {
+        return listView;
+    }
+
+    public void setListView(ListView listView) {
+        this.listView = listView;
+    }
+    
+    
 
 }

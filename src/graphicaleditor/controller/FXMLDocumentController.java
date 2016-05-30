@@ -44,6 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -230,16 +231,16 @@ public class FXMLDocumentController implements Initializable {
                         {
                             DirectoryChooser chooser = new DirectoryChooser();
                             selectedFile = new File(chooser.showDialog(null).getAbsolutePath(), "settings.xml");
-                            generateBMElement();
+                            generateBMElement(selectedFile);
                         }
-                           
+
                         if (okHandler != null) {
                             okHandler.handle(c);
                         }
                         d.close();
 
                         if (type == 0) {
-                            textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
+                            textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
                         }
 
                     }
@@ -276,6 +277,7 @@ public class FXMLDocumentController implements Initializable {
                 processor.generateRingTopo(c.getAsId().getText(), Integer.parseInt(c.getNumOfHost().getText()));
                 processor.parse();
                 graphicalModeController.renderOutsideView(processor);
+                textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
 
             }
         }, d, null);
@@ -295,7 +297,7 @@ public class FXMLDocumentController implements Initializable {
                         "", "", 0, 1000000000, 1250000000);
                 processor.parse();
                 graphicalModeController.renderOutsideView(processor);
-                textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
+                textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
 
             }
         }, d, null);
@@ -317,7 +319,7 @@ public class FXMLDocumentController implements Initializable {
                         Integer.parseInt(c.getZ().getText()));
                 processor.parse();
                 graphicalModeController.renderOutsideView(processor);
-
+                textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
             }
         }, d, null);
     }
@@ -337,16 +339,17 @@ public class FXMLDocumentController implements Initializable {
                         Integer.parseInt(c.getZ().getText()));
                 processor.parse();
                 graphicalModeController.renderOutsideView(processor);
+                textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
 
             }
         }, d, null);
     }
 
-    private void generateBMElement() {
+    private void generateBMElement(File f) {
         try {
             FileWriter fileWriter = null;
 
-            fileWriter = new FileWriter(selectedFile);
+            fileWriter = new FileWriter(f);
             fileWriter.write(
                     "<simulation>" + "</simulation>");
             fileWriter.close();
@@ -403,7 +406,7 @@ public class FXMLDocumentController implements Initializable {
 
             @Override
             public void handle(AbstractDialogController controller) {
-                
+
                 File selectedF = getHostFileController().getSelectedFile();
                 File savedFile = new File(selectedF.getParent(), "hostfile");
                 XMLProcessor p = getHostFileController().getXMLProcessor();
@@ -427,22 +430,84 @@ public class FXMLDocumentController implements Initializable {
         }, d, null);
     }
 
-    @FXML
-    private void genConfig() {
+    private void saveHostFile() {
+        List<String> list = new ArrayList<>();
+        for (HostView h : getGraphicalModeController().getASNow().getHostList()) {
+            if (h.isSelected()) {
+                list.add(h.getmId());
+            }
+        }
+        if (list.size() > 0) {
+            File file = new File(selectedFile.getParent() + File.separator + "hostfile");
+            
+            new TextFileProcessor().write(file, list);
+            System.out.println("writing...");
+        } else {
+            System.out.println("no hostfile chosen");
+        }
+    }
 
+    private void saveBMFile() {
+        File file = new File(selectedFile.getParent() + File.separator + "settings.xml");
+
+        generateBMElement(file);
+//        file = new File(selectedFile.getParent() + File.separator + "settings.xml");
+        XMLProcessor p = new XMLProcessor(file.getAbsolutePath());
+        GraphicalModeController c = getGraphicalModeController();
+        boolean useHimeno = c.getUseHimeno().isSelected();
+        boolean useGraph500 = c.getUseGraph500().isSelected();
+        boolean useNAS = c.getUseNAS().isSelected();
+        String himenoClass = "";
+        int HimenoNumprocs = 0;
+        int graph500Numprocs = 0;
+        int scale = 0;
+        String kernel = "";
+        String klass = "";
+        int NASNumprocs = 0;
+
+        if (useHimeno) {
+            himenoClass = c.getHimenoClass().getValue();
+            HimenoNumprocs = c.getHimenoNumprocs().getValue();
+        }
+        if (useGraph500) {
+            graph500Numprocs = c.getGraph500Numprocs().getValue();
+            scale = c.getScale().getValue();
+        }
+//                int edgeFactor = c.getEdgeFactor().getText().isEmpty()? 0 : Integer.parseInt(c.getEdgeFactor().getText());;
+//                int engine = c.getEngine().getText().isEmpty()? 0 : Integer.parseInt(c.getEngine().getText());;
+        if (useNAS) {
+            kernel = c.getKernel().getValue();
+            klass = c.getKlass().getValue();
+            NASNumprocs = c.getNASNumprocs().getValue();
+        }
+
+        p.genBM(useHimeno, useGraph500, useNAS, HimenoNumprocs, himenoClass, graph500Numprocs, scale, kernel, klass, NASNumprocs);
     }
 
     @FXML
     private void simulate() {
-        DirectoryChooser dc = new DirectoryChooser();
-        File dir = dc.showDialog(null);
-        if (dir != null) {
-            client = new JavaClient(dir.getAbsolutePath());
+//        DirectoryChooser dc = new DirectoryChooser();
+//        File dir = dc.showDialog(null);
+
+        Alert alert = null;
+
+        if (selectedFile != null && getGraphicalModeController().getASNow() != null) {
+            saveHostFile();
+            saveBMFile();
+            client = new JavaClient(selectedFile.getParent());
             sessionStatus = client.simulate();
 
             //nen dung progressDialog
             System.out.println("simulating session id = " + sessionStatus.output);
+        } else {
+            alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Simulation Status");
+            alert.setContentText("Please choose a platform and benchmark!");
+
+            alert.showAndWait();
         }
+        
+        
 
     }
 
@@ -537,7 +602,7 @@ public class FXMLDocumentController implements Initializable {
             graphicalModeController.clearView();
             textModeController.clearText();
             generatePlatformElement();
-            textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
+            textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
         }
 
     }
@@ -547,8 +612,8 @@ public class FXMLDocumentController implements Initializable {
             FileWriter fileWriter = null;
 
             fileWriter = new FileWriter(selectedFile);
-            fileWriter.write("<?xml version='1.0'?>\n" +
-//"<!DOCTYPE platform SYSTEM \"http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd\">\n" +
+            fileWriter.write("<?xml version='1.0'?>\n"
+                    + //"<!DOCTYPE platform SYSTEM \"http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd\">\n" +
                     "<platform version=\"4\">" + "</platform>");
             fileWriter.close();
         } catch (IOException ex) {
@@ -559,20 +624,32 @@ public class FXMLDocumentController implements Initializable {
     private void provideOpenFunctionality() throws InterruptedException, ExecutionException, SAXException, IOException, ParserConfigurationException {
         System.out.println("Open");
 
+        graphicalModeController.setOpenFirstTime(true);
+
         FileChooser fileChooser = new FileChooser();
         selectedFile = fileChooser.showOpenDialog(null);
 
         if (selectedFile != null) {
             graphicalModeController.clearView();
-            textModeController.clearText();
-            textModeController.loadFileToTextEditor(selectedFile.getAbsolutePath());
             XMLProcessor parser = new XMLProcessor(selectedFile.getAbsolutePath());
             parser.parse();
-//                System.out.println(parser.getAsList().get(0).getRouteList());
             graphicalModeController.renderOutsideView(parser);
-        } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            textModeController.clearText();
+                            textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
+                        }
+                    });
+                }
+
+            }).start();
 
         }
+
     }
 
     private void provideSaveFunctionality() {
