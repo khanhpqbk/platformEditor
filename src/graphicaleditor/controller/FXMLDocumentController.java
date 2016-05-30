@@ -52,6 +52,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -219,10 +221,6 @@ public class FXMLDocumentController implements Initializable {
 
                     @Override
                     public void handle(MouseEvent event) {
-//                            if(!(controller instanceof HostFileController)) {
-//                                FileChooser chooser = new FileChooser();
-//                                selectedFile = chooser.showSaveDialog(null);
-//                            }
 
                         if (type == 0) {
                             DirectoryChooser chooser = new DirectoryChooser();
@@ -450,15 +448,26 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void getResult() {
+        Alert alert = null;
         try {
             if (client == null) {
                 // dialog simulation chua bat dau
-                System.out.println("simulation not started.");
+                alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Simulation Status");
+                alert.setContentText("Simulation not started!");
+
+                alert.showAndWait();
+//                System.out.println("simulation not started.");
                 return;
             } else if (client != null && !StatusCode.FINISHED.equals(client.getStatusCode(sessionStatus.output))) {
 
                 // dialog simulation chua ket thuc
-                System.out.println("simulation not finished!");
+                alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Simulation Status");
+                alert.setContentText("Simulation not finished!");
+
+                alert.showAndWait();
+//                System.out.println("simulation not finished!");
                 return;
             }
             // dialog get result
@@ -466,7 +475,7 @@ public class FXMLDocumentController implements Initializable {
             // end dialog get result
 
             ByteBuffer bb = res.resultfile;
-            File f = new File("/home/khanh/zipfile.zip");
+            File f = new File("/tmp/zipfile.zip");
 
             FileChannel wChannel = new FileOutputStream(f, false).getChannel();
 
@@ -476,8 +485,8 @@ public class FXMLDocumentController implements Initializable {
             wChannel.close();
 
             // dialog analyzing result
-            new CoDecomFileProcessor().unZipIt("/home/khanh/zipfile.zip", "/home/khanh/unzipfolder");
-            List<Benchmark> bms = new BMResultProcessor().parseResult("/home/khanh/unzipfolder");
+            new CoDecomFileProcessor().unZipIt("/tmp/zipfile.zip", "/tmp/unzipfolder");
+            List<Benchmark> bms = new BMResultProcessor().parseResult("/tmp/unzipfolder");
             // end dialog analyzing result
 
             final Stage d = new Stage();
@@ -539,7 +548,7 @@ public class FXMLDocumentController implements Initializable {
 
             fileWriter = new FileWriter(selectedFile);
             fileWriter.write("<?xml version='1.0'?>\n" +
-"<!DOCTYPE platform SYSTEM \"http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd\">" +
+//"<!DOCTYPE platform SYSTEM \"http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd\">\n" +
                     "<platform version=\"4\">" + "</platform>");
             fileWriter.close();
         } catch (IOException ex) {

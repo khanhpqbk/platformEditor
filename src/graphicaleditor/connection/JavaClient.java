@@ -57,9 +57,9 @@ public class JavaClient {
     public JavaClient(String dir) {
         try {
             this.dir = dir;
-//            transport = new TSocket("127.0.0.1", 26102);
+            transport = new TSocket("127.0.0.1", 26102);
 //            transport = new TSocket("58.187.134.226", 7624);
-            transport = new TSocket("192.168.1.141", 26102);
+//            transport = new TSocket("192.168.1.141", 26102);
             transport.open();
             
             TProtocol protocol = new TBinaryProtocol(transport);
@@ -72,9 +72,9 @@ public class JavaClient {
     public SessionStatus simulate() {
         SessionStatus sessionStatus = null;
         try {       
-            new CoDecomFileProcessor().zipDirSimgrid(dir, "/home/khanh/sessionZip.zip");
+            new CoDecomFileProcessor().zipDirSimgrid(dir, "/tmp/sessionZip.zip");
             RandomAccessFile aFile = new RandomAccessFile(
-                    "/home/khanh/sessionZip.zip", "r");
+                    "/tmp/sessionZip.zip", "r");
             FileChannel inChannel = aFile.getChannel();
             long fileSize = inChannel.size();
             ByteBuffer buffer = ByteBuffer.allocate((int) fileSize);

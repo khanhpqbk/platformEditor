@@ -75,10 +75,14 @@ public class XMLProcessor {
     }
 
     public XMLProcessor(String fileName) {
-        try {
             inputFile = new File(fileName);
             System.out.println("filename: " + fileName);
-            DocumentBuilderFactory dbFactory
+            init();
+    }
+    
+    private void init() {
+        try {
+        DocumentBuilderFactory dbFactory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             doc = dBuilder.parse(inputFile);
@@ -92,64 +96,33 @@ public class XMLProcessor {
         }
     }
 
-    private void sortChildNodes(Node node, boolean descending,
-            int depth, Comparator comparator) {
-
-        List nodes = new ArrayList();
-        NodeList childNodeList = node.getChildNodes();
-        if (depth > 0 && childNodeList.getLength() > 0) {
-            for (int i = 0; i < childNodeList.getLength(); i++) {
-                Node tNode = childNodeList.item(i);
-                sortChildNodes(tNode, descending, depth - 1,
-                        comparator);
-                // Remove empty text nodes
-                if ((!(tNode instanceof Text))
-                        || (tNode instanceof Text && ((Text) tNode)
-                        .getTextContent().trim().length() > 1)) {
-                    nodes.add(tNode);
-                }
+    private void preprocessXml() {
+            TextFileProcessor pro = new TextFileProcessor();
+            List<String> lines = pro.read(inputFile);
+            if (lines.get(1).contains("http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd")) {
+                lines.remove(1);
+//                System.out.println("CONTAIN NHE CUNG!!!");
             }
-            Comparator comp = (comparator != null) ? comparator
-                    : new DefaultNodeNameComparator();
-            if (descending) {
-                //if descending is true, get the reverse ordered comparator
-                Collections.sort(nodes, Collections.reverseOrder(comp));
-            } else {
-                Collections.sort(nodes, comp);
-            }
-
-            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-                Node element = (Node) iter.next();
-                node.appendChild(element);
-            }
-        }
-
+            pro.write(inputFile, lines);
     }
 
-    class DefaultNodeNameComparator implements Comparator {
-
-        public int compare(Object arg0, Object arg1) {
-            return ((Node) arg0).getNodeName().compareTo(
-                    ((Node) arg1).getNodeName());
-        }
-
-    }
-
-    private void saveXml(File inputFile) {
+    private void saveAndRefactorXml(File inputFile) {
         try {
 
-            XPathFactory xpathFactory = XPathFactory.newInstance();
-            // XPath to find empty text nodes.
-            XPathExpression xpathExp = xpathFactory.newXPath().compile(
-                    "//text()[normalize-space(.) = '']");
-            NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(doc, XPathConstants.NODESET);
+            TextFileProcessor pro = new TextFileProcessor();
+            List<String> lines = new ArrayList<>();
 
-            // Remove each empty text node from document.
-            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
-                Node emptyTextNode = emptyTextNodes.item(i);
-                emptyTextNode.getParentNode().removeChild(emptyTextNode);
-            }
-
+//            XPathFactory xpathFactory = XPathFactory.newInstance();
+//            // XPath to find empty text nodes.
+//            XPathExpression xpathExp = xpathFactory.newXPath().compile(
+//                    "//text()[normalize-space(.) = '']");
+//            NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(doc, XPathConstants.NODESET);
+//
+//            // Remove each empty text node from document.
+//            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+//                Node emptyTextNode = emptyTextNodes.item(i);
+//                emptyTextNode.getParentNode().removeChild(emptyTextNode);
+//            }
             // add proper indentation
             TransformerFactory transformerFactory
                     = TransformerFactory.newInstance();
@@ -159,45 +132,30 @@ public class XMLProcessor {
                     "{http://xml.apache.org/xslt}indent-amount", "4");
             DOMSource source = new DOMSource(doc);
 
+//            Source source = new StreamSource(inputFile);
             StreamResult file = new StreamResult(inputFile);
             transformer.transform(source, file);
 
-            
-            TransformerFactory factory = TransformerFactory.newInstance();
-        Source xslt = new StreamSource(new File("/home/khanh/input.xslt"));
-        Transformer tf = factory.newTransformer(xslt);
+//            TransformerFactory factory = TransformerFactory.newInstance();
+            Source xslt = new StreamSource(new File("/tmp/input.xslt"));
+            Transformer tf = transformerFactory.newTransformer(xslt);
 
-        Source text = new StreamSource(inputFile);
-        tf.transform(text, new StreamResult(inputFile));
-            
-//            sortChildNodes(doc.getDocumentElement().getElementsByTagName("AS").item(0), false, 2, null);
-            // sortS
-//            SAXParserFactory spf = SAXParserFactoryImpl.newInstance();
-//            spf.setNamespaceAware(true);
-//            spf.setValidating(false);
-//            spf.setFeature("http://xml.org/sax/features/validation", false);
-//            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-//            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-//            SAXParser sp = spf.newSAXParser();
-//            Source src = new SAXSource(sp.getXMLReader(), new InputSource(inputFile.getAbsolutePath()));
-//            // change here
-//            String resultFileName = inputFile.getAbsolutePath().replaceAll(".xml$", ".cooked.xml");
-//            
-//            Result result = new StreamResult(inputFile);
-////            TransformerFactory tf = TransformerFactory.newInstance();
-//            TransformerFactory tf = new TransformerFactoryImpl();
-//            
-//            Source xsltSource = new StreamSource(new File("/home/khanh/xslt.input"));
-//            Transformer xsl = tf.newTransformer(xsltSource);
-//            xsl.setParameter("srcDocumentName", inputFile.getName());
-//            xsl.setParameter("srcDocumentPath", inputFile.getAbsolutePath());
-//
-//            xsl.transform(src, result);
-        } catch (XPathExpressionException ex) {
+            Source text = new StreamSource(inputFile);
+            tf.transform(text, new StreamResult(inputFile));
+
+            // add line doctype platform
+//            pro = new TextFileProcessor();
+            lines = pro.read(inputFile);
+            lines.add(1, "<!DOCTYPE platform SYSTEM \"http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd\">");
+            pro.write(inputFile, lines);
+
+        } 
+//        catch (XPathExpressionException ex) {
+//            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
+//        } 
+        catch (TransformerException ex) {
             Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            
+
         }
 
     }
@@ -209,15 +167,19 @@ public class XMLProcessor {
 
     public void addHostXml(ASView as, HostView host) {
 
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
             if (a.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eleAs = (Element) a;
-                System.out.println("addhostxml: as id : " + eleAs.getAttribute("id"));
+//                System.out.println("addhostxml: as id : " + eleAs.getAttribute("id"));
                 if (eleAs.getAttribute("id").equalsIgnoreCase(as.getmId())) {
-                    System.out.println("addhostxml: found as");
+//                    System.out.println("addhostxml: found as");
                     // day chinh la AS can tim
                     Node newHost = buildNodeFromHostView(doc, host);
                     eleAs.appendChild(newHost);
@@ -226,20 +188,24 @@ public class XMLProcessor {
         }
 
         // write the content on file
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
     public void removeHostXml(ASView as, HostView host) {
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
             if (a.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eleAs = (Element) a;
-                System.out.println("removehostxml: as id : " + eleAs.getAttribute("id"));
+//                System.out.println("removehostxml: as id : " + eleAs.getAttribute("id"));
                 if (eleAs.getAttribute("id").equalsIgnoreCase(as.getmId())) {
-                    System.out.println("removehostxml: found as");
+//                    System.out.println("removehostxml: found as");
                     // day chinh la AS can tim
 //                    Node newHost = buildNodeFromHostView(doc, host);
                     NodeList nListHost = eleAs.getElementsByTagName("host");
@@ -254,7 +220,7 @@ public class XMLProcessor {
         }
 
         // write the content on file
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -272,6 +238,10 @@ public class XMLProcessor {
     }
 
     public void modifyHostXml(HostView newHost, String oldId) {
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
@@ -303,11 +273,15 @@ public class XMLProcessor {
             }
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
     private void modifyHost(HostView newHost, Node oldHost) {
+        preprocessXml();
+        
+        init();
+        
         boolean reParse = false;
         if (!newHost.getmId().equals(((Element) oldHost).getAttribute("id"))) {
             reParse = true;
@@ -315,11 +289,6 @@ public class XMLProcessor {
         Element e = (Element) oldHost;
         e.setAttribute("id", newHost.getmId());
         e.setAttribute("spped", String.valueOf(newHost.getPower()));
-//        e.setAttribute("state", newHost.getState());
-//        e.setAttribute("availability", String.valueOf(newHost.getAvailability()));
-//        e.setAttribute("pstate", String.valueOf(newHost.getPstate()));
-//        e.setAttribute("core", String.valueOf(newHost.getCore()));
-//        e.setAttribute("coordinates", String.valueOf(newHost.getCoordinates()));
 
         if (reParse) {
             parse();
@@ -328,15 +297,21 @@ public class XMLProcessor {
     }
 
     public void addASXml(ASView as) {
+        
+        preprocessXml();
+        
+        init();
+        
         Node n = doc.getElementsByTagName("platform").item(0);
-        if (n == null)
+        if (n == null) {
             System.out.println("null");
-        else
+        } else {
             n.appendChild(buildNodeFromASView(doc, as));
+        }
 //        appendChild();
 //        doc.getDocumentElement().
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -349,6 +324,11 @@ public class XMLProcessor {
     }
 
     public void removeASXml(ASView as) {
+        
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         Element rmv = null;
         for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -356,7 +336,7 @@ public class XMLProcessor {
             if (a.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eleAs = (Element) a;
-                System.out.println("deleteasxml: found as id : " + eleAs.getAttribute("id"));
+//                System.out.println("deleteasxml: found as id : " + eleAs.getAttribute("id"));
                 if (eleAs.getAttribute("id").equals(as.getmId())) {
                     rmv = eleAs;
                 }
@@ -367,11 +347,16 @@ public class XMLProcessor {
             doc.getDocumentElement().removeChild(rmv);
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
     public void removeRouteXml(RouteView rv) {
+        
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
@@ -390,7 +375,7 @@ public class XMLProcessor {
             }
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -413,20 +398,25 @@ public class XMLProcessor {
             }
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
     public void addRouterXml(ASView as, RouterView rv) {
+        
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
             if (a.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eleAs = (Element) a;
-                System.out.println("addrouterxml: as id : " + eleAs.getAttribute("id"));
+//                System.out.println("addrouterxml: as id : " + eleAs.getAttribute("id"));
                 if (eleAs.getAttribute("id").equalsIgnoreCase(as.getmId())) {
-                    System.out.println("addrouterxml: found as");
+//                    System.out.println("addrouterxml: found as");
                     // day chinh la AS can tim
                     Node newRouter = buildNodeFromRouterView(doc, rv);
                     eleAs.appendChild(newRouter);
@@ -435,7 +425,7 @@ public class XMLProcessor {
         }
 
         // write the content on file
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -447,6 +437,10 @@ public class XMLProcessor {
     }
 
     public void removeRouterXml(RouterView rv) {
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
@@ -465,11 +459,15 @@ public class XMLProcessor {
             }
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
     public void modifyRouterXml(RouterView newRouter, String oldId) {
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
@@ -501,20 +499,24 @@ public class XMLProcessor {
             }
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
     public void addRouteXml(ASView as, RouteView rv) {
+        preprocessXml();
+        
+        init();
+        
         NodeList nList = doc.getElementsByTagName("AS");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node a = nList.item(temp);
             if (a.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eleAs = (Element) a;
-                System.out.println("addroutexml: as id : " + eleAs.getAttribute("id"));
+//                System.out.println("addroutexml: as id : " + eleAs.getAttribute("id"));
                 if (eleAs.getAttribute("id").equalsIgnoreCase(as.getmId())) {
-                    System.out.println("addroutexml: found as");
+//                    System.out.println("addroutexml: found as");
                     // day chinh la AS can tim
                     buildNodeAndAppendNodeFromRouteView(doc, rv, eleAs);
 //                    eleAs.appendChild(newRoute);
@@ -523,7 +525,7 @@ public class XMLProcessor {
         }
 
         // write the content on file
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -534,9 +536,9 @@ public class XMLProcessor {
             if (a.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eleAs = (Element) a;
-                System.out.println("addroutexml: as id : " + eleAs.getAttribute("id"));
+//                System.out.println("addroutexml: as id : " + eleAs.getAttribute("id"));
                 if (eleAs.getAttribute("id").equalsIgnoreCase(as.getmId())) {
-                    System.out.println("addroutexml: found as");
+//                    System.out.println("addroutexml: found as");
                     // day chinh la AS can tim
                     buildNodeAndAppendNodeFromRouteViewRoom(doc, rv, eleAs);
 //                    eleAs.appendChild(newRoute);
@@ -545,7 +547,7 @@ public class XMLProcessor {
         }
 
         // write the content on file
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -648,7 +650,7 @@ public class XMLProcessor {
                 Element eleAS = (Element) nNode;
                 ASView as = new ASView(new Image(new File("src/graphicaleditor/res/as.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), eleAS.getAttribute("id"));
                 String id = eleAS.getAttribute("id");
-                System.out.println("id = " + id);
+//                System.out.println("id = " + id);
                 NodeList hosts = eleAS.getElementsByTagName("host");
                 as.setHostList(parseHosts(hosts));
                 NodeList links = eleAS.getElementsByTagName("link");
@@ -678,6 +680,8 @@ public class XMLProcessor {
                         case "TORUS":
                             break;
                         default:
+                            generateStarTopo(true, as, numOfHost, cv.getPrefix(), cv.getSuffix(), cv.getLatency(), cv.getPower(),
+                                    cv.getBandwidth());
                             break;
                     }
                 }
@@ -852,13 +856,13 @@ public class XMLProcessor {
         }
 //        RouterView rv = new RouterView(new Image(new File("src/graphicaleditor/res/router.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true),
 //                "main_router");
-HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), "main_router",
-                    power,
-                    "ON",
-                    0,
-                    1.0,
-                    1,
-                    0);
+        HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg").toURI().toString(), GraphicalModeController.VIEW_SIZE, GraphicalModeController.VIEW_SIZE, true, true), "main_router",
+                power,
+                "ON",
+                0,
+                1.0,
+                1,
+                0);
         Node h = (Node) buildNodeFromHostView(doc, hv);
         if (forCluster) {
             asView.getHostList().add(hv);
@@ -898,9 +902,7 @@ HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg"
         }
 
         if (!forCluster) {
-
-            saveXml(inputFile);
-
+            saveAndRefactorXml(inputFile);
         }
 
     }
@@ -935,7 +937,7 @@ HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg"
 //            buildNodeFromRouteViewStep2(doc, rv, (Element) route);
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -951,7 +953,7 @@ HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg"
         // gen routes
         genRoute(as, x, y, z);
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -968,7 +970,7 @@ HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg"
         // remove redundant from torus
         rmvRedundantRoute(as, x, y, z);
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
@@ -1160,7 +1162,7 @@ HostView hv = new HostView(new Image(new File("src/graphicaleditor/res/host.jpg"
             genNASBM(kernel, klass, NASNumprocs);
         }
 
-        saveXml(inputFile);
+        saveAndRefactorXml(inputFile);
 
     }
 
