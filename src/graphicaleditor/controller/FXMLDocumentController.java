@@ -596,14 +596,18 @@ public class FXMLDocumentController implements Initializable {
 
     private void provideNewFileFunctionality() {
         System.out.println("New");
-        FileChooser fileChooser = new FileChooser();
-        selectedFile = fileChooser.showSaveDialog(null);
-        if (selectedFile != null) {
+        DirectoryChooser fileChooser = new DirectoryChooser();
+        File f = fileChooser.showDialog(null);
+        if (f != null) {
+            selectedFile = new File(f.getAbsolutePath() + File.separator + "platform.xml");
+        
+        
             graphicalModeController.clearView();
             textModeController.clearText();
             generatePlatformElement();
-            textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
+//            textModeController.loadTextModeAndHostFilePane(selectedFile.getAbsolutePath());
         }
+        
 
     }
 

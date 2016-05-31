@@ -137,7 +137,7 @@ public class XMLProcessor {
             transformer.transform(source, file);
 
 //            TransformerFactory factory = TransformerFactory.newInstance();
-            Source xslt = new StreamSource(new File("/bin/input.xslt"));
+            Source xslt = new StreamSource(new File("src/graphicaleditor/res/input.xslt"));
             Transformer tf = transformerFactory.newTransformer(xslt);
 
             Source text = new StreamSource(inputFile);

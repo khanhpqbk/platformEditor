@@ -62,18 +62,38 @@
                             <ComboBox fx:id="NASNumprocs" prefHeight="21.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                               <items>
                                 <FXCollections fx:factory="observableArrayList">
-                                  <String fx:value="1" />
-                                  <String fx:value="2" />
-                                  <String fx:value="4" />
+                                  <Integer fx:value="1" />
+                                  <Integer fx:value="2" />
+                                  <Integer fx:value="4" />
                                 </FXCollections>
                               </items>
                             </ComboBox>
+                            <GridPane id="GridPane" prefHeight="55.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                              <children>
+                                <HBox id="HBox" alignment="CENTER" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                  <children>
+                                    <Group id="Group">
+                                      <children>
+                                        <Label fx:id="statusNAS" layoutX="0.0" layoutY="-8.0" prefWidth="226.0" text="Please choose at least one benchmark." textFill="RED" />
+                                      </children>
+                                    </Group>
+                                  </children>
+                                </HBox>
+                              </children>
+                              <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                            </GridPane>
                           </children>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="143.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="119.0" minWidth="10.0" prefWidth="97.0" />
                           </columnConstraints>
                           <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -113,6 +133,12 @@
                                 </FXCollections>
                               </items>
                             </ComboBox>
+                            <Group id="Group" scaleX="1.0" scaleY="1.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                            <Group id="Group" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                              <children>
+                                <Label fx:id="statusHimeno" layoutX="0.0" layoutY="-8.0" prefWidth="229.0" text="Please choose at least one benchmark." textFill="RED" />
+                              </children>
+                            </Group>
                           </children>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -122,13 +148,14 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
                       </children>
                     </AnchorPane>
                   </content>
                 </Tab>
-                <Tab  text="Graph500">
+                <Tab text="Graph500">
                   <content>
                     <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                       <children>
@@ -169,13 +196,19 @@
                                 </FXCollections>
                               </items>
                             </ComboBox>
-                            <CheckBox fx:id="useGraph500" id="useGraph500" mnemonicParsing="false" text="Use graph500" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <CheckBox fx:id="useGraph500" mnemonicParsing="false" text="Use graph500" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <Group id="Group" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                              <children>
+                                <Label fx:id="statusGraph500" layoutX="0.0" layoutY="-8.0" prefWidth="229.0" text="Please choose at least one benchmark." textFill="RED" />
+                              </children>
+                            </Group>
                           </children>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -192,7 +225,7 @@
             <Label font="$x1" text="Benchmark Usage" />
           </top>
         </BorderPane>
-        <AnchorPane id="anchordPane" fx:id="anchorPane" prefHeight="492.0" prefWidth="671.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.topAnchor="0.0" />
+        <AnchorPane id="anchordPane" fx:id="anchorPane" minWidth="591.0" prefHeight="507.0" prefWidth="591.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="-1.0" />
         <TitledPane animated="false" layoutX="11.0" layoutY="11.0" minWidth="81.0" prefHeight="221.0" prefWidth="81.0" text="Pallete">
           <content>
             <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">

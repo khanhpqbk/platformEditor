@@ -76,7 +76,16 @@ public class GraphicalModeController implements Initializable {
 
     boolean changeKernel = false;
     boolean changeClass = false;
-    
+
+    @FXML
+    private Label statusHimeno;
+
+    @FXML
+    private Label statusNAS;
+
+    @FXML
+    private Label statusGraph500;
+
     @FXML
     private CheckBox useHimeno;
 
@@ -88,7 +97,7 @@ public class GraphicalModeController implements Initializable {
 
     @FXML
     private ComboBox<Integer> himenoNumprocs;
-    
+
     @FXML
     private ComboBox<String> himenoClass;
 
@@ -103,7 +112,6 @@ public class GraphicalModeController implements Initializable {
 //
 //    @FXML
 //    private TextField engine;
-
     @FXML
     private ComboBox<String> kernel;
 
@@ -112,10 +120,8 @@ public class GraphicalModeController implements Initializable {
 
     @FXML
     private ComboBox<Integer> NASNumprocs;
-    
+
     private boolean openFirstTime = false;
-    
-    
 
     @FXML
     private AnchorPane anchorPane;
@@ -154,7 +160,7 @@ public class GraphicalModeController implements Initializable {
     private double xSrc, ySrc, xDes, yDes;
 
     private FXMLDocumentController parentController;
-    private ContextMenu deleteHostCM = null;
+    private ContextMenu cmNow = null;
 
     public void setParentController(FXMLDocumentController c) {
         this.parentController = c;
@@ -664,7 +670,7 @@ public class GraphicalModeController implements Initializable {
                         }
                     } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                         System.out.println("chuot phai on host");
-                        deleteRouterHostView(view, mouseEvent);
+                        showContextMenu(view, mouseEvent);
 
                         mouseEvent.consume();
                     }
@@ -786,9 +792,9 @@ public class GraphicalModeController implements Initializable {
 
     }
 
-    private void deleteRouterHostView(ImageView view, MouseEvent mouseEvent) {
+    private void showContextMenu(ImageView view, MouseEvent mouseEvent) {
         final ContextMenu contextMenu = new ContextMenu();
-        deleteHostCM = contextMenu;
+        cmNow = contextMenu;
 //                            MenuItem gointo = new MenuItem("Go into");
         MenuItem delete = new MenuItem("Delete");
         MenuItem markForBM = null;
@@ -917,6 +923,18 @@ public class GraphicalModeController implements Initializable {
         enablePalleteFunction();
         renderBMPane();
         initBMPane();
+        initAnchorPane();
+    }
+
+    private void initAnchorPane() {
+        anchorPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (cmNow != null) {
+                    cmNow.hide();
+                }
+            }
+        });
     }
 
     private void enablePalleteFunction() {
@@ -981,7 +999,7 @@ public class GraphicalModeController implements Initializable {
         Node node = gridPane.getChildren().get(3);
 
     }
-    
+
     public void initBMPane() {
         himenoNumprocs.setDisable(true);
         himenoClass.setDisable(true);
@@ -1044,6 +1062,75 @@ public class GraphicalModeController implements Initializable {
             }
         }
         );
+
+        NASNumprocs.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+                if (asNow != null) {
+                    numOfHost = asNow.getHostList().size();
+                    if (newValue != null) {
+                        if (newValue > numOfHost) {
+                            setWarningNumOfHost("NAS");
+                        } else {
+                            setWarningNumOfHost("");
+                        }
+                    }
+                }
+            }
+        });
+
+        graph500Numprocs.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+                if (asNow != null) {
+                    numOfHost = asNow.getHostList().size();
+                    if (newValue != null) {
+                        if (newValue > numOfHost) {
+                            setWarningNumOfHost("NAS");
+                        } else {
+                            setWarningNumOfHost("");
+                        }
+                    }
+                }
+            }
+        });
+
+        himenoNumprocs.valueProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+                if (asNow != null) {
+                    numOfHost = asNow.getHostList().size();
+                    if (newValue != null) {
+                        if (newValue > numOfHost) {
+                            setWarningNumOfHost("NAS");
+                        } else {
+                            setWarningNumOfHost("");
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void setWarningNumOfHost(String str) {
+        switch (str) {
+            case "NAS":
+                statusNAS.setText("Numprocs cannot greater than hosts");
+                break;
+            case "g":
+                statusGraph500.setText("Numprocs cannot greater than hosts");
+                break;
+            case "h":
+                statusHimeno.setText("Numprocs cannot greater than hosts");
+                break;
+            default:
+                statusNAS.setText("");
+                statusGraph500.setText("");
+                statusHimeno.setText("");
+                break;
+        }
+
     }
 
     private void setNumprocs() {
@@ -1057,13 +1144,10 @@ public class GraphicalModeController implements Initializable {
             } else {
                 setMaxNumprocs(121, "bt");
             }
+        } else if (klassStr.equals("S")) {
+            setMaxNumprocs(16, "others");
         } else {
-            if (klassStr.equals("S")) {
-                setMaxNumprocs(16, "others");
-            } else {
-                setMaxNumprocs(128, "others");
-            }
-
+            setMaxNumprocs(128, "others");
         }
     }
 
@@ -1346,7 +1430,7 @@ public class GraphicalModeController implements Initializable {
     public void setListView(ListView listView) {
         this.listView = listView;
     }
-    
-    
+
+    private int numOfHost = 0;
 
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid/simgrid.dtd">
+<simulation>
+   <benchmark class="S" kernel="cg" numprocs="8" type="NAS"/>
+</simulation>

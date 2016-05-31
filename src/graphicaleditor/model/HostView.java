@@ -36,7 +36,7 @@ public class HostView extends ImageView {
         this.id = id;
         this.power = power;
         this.state = state;
-        
+        setSelected(true);
         setOnChanged();
     }
     
@@ -60,6 +60,7 @@ public class HostView extends ImageView {
         this.availability = availability;
         this.core = core;
         this.coordinates = coordinates;
+        setSelected(true);
         setOnChanged();
     }
     
